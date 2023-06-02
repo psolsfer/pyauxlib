@@ -103,7 +103,7 @@ def iterate_folder(
             )
 
 
-def create_folder(path: Path):
+def create_folder(path: Path, includes_file=False):
     """Creates the folder passed in the path (if it doesn't exist).
     Useful to be sure that a folder exists before saving a file.
 
@@ -111,12 +111,13 @@ def create_folder(path: Path):
     ----------
     path : Path
         Path object for the folder (can also include the file)
+    includes_file : bool, optional
+        The path includes a file at the end, by default False.
     """
 
     # NOTE: see also os.makedirs
 
-    # Removes the filename if included in the original path
-    path = path if not path.suffix else path.parents[0]
+    path = path.parent if includes_file else path
 
     try:
         path.mkdir(parents=True)
