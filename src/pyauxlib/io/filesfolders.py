@@ -1,6 +1,7 @@
 import re
 import time
 from collections.abc import Generator
+from fnmatch import fnmatch
 from pathlib import Path
 from typing import NamedTuple
 
@@ -25,14 +26,14 @@ def iterate_files(pathobject: Path, file_extensions: list[str] | None = None) ->
         Path object to look for files
     file_extensions : list[str], optional
         Extension of the files to be returned, by default None (all the extensions).
-        It doesn't work if pathobject is a file.
+        It doesn't work if ``pathobject`` is a file.
 
     Returns
     -------
     Generator
         Generator with a FileRelPath class, including the found files with their path
         relative to the parent_path.
-        If pathobject is a file, yields only the values for the file itself.
+        If ``pathobject`` is a file, yields only the values for the file itself.
 
     Raises
     ------
@@ -57,6 +58,7 @@ def iterate_files(pathobject: Path, file_extensions: list[str] | None = None) ->
 def iterate_folder(
     folder: str | Path,
     file_extensions: list[str] | None = None,
+    file_patterns: list[str] | None = None,
     subfolders: bool = True,
     parent_path: Path | None = None,
 ) -> Generator[FileRelPath, None, None]:
@@ -70,6 +72,18 @@ def iterate_folder(
     file_extensions : list[str], optional
         list of extensions of the files that will be looked for. By default None.
         If not passed, it returns all the files.
+    file_patterns : list[str], optional
+        list of patterns that the file names should match. By default None.
+        If not passed, it returns all the files. If multiple patterns are provided,
+        a file will be returned if its name matches any of the patterns (i.e., the
+        patterns are combined using a logical 'OR').
+        The patterns can include wildcards, such as '*' and '?', to match multiple
+        characters or a single character, respectively. For example:
+            - ["*before*"]: matches all files that have the word "before" in their name.
+            - ["*.txt"]: matches all files with the '.txt' extension.
+            - ["file_?.txt"]: matches all files with names like 'file_1.txt', 'file_2.txt', etc.
+            - ["file_[0-9].txt"]: equivalent to the previous example, but uses a character set
+              to match any digit between 0 and 9.
     subfolders : bool, optional
         include or not subfolders, by default True
     parent_path : Path, optional
@@ -92,13 +106,15 @@ def iterate_folder(
     for entry in current_folder.iterdir():
         # Only returns files, not folders
         if entry.is_file() and any(re.match(ext, entry.suffix.lower()) for ext in file_extensions):
-            yield FileRelPath(entry, current_folder.relative_to(parent_path))
+            if file_patterns is None or any(fnmatch(entry.name, pattern) for pattern in file_patterns):
+                yield FileRelPath(entry, current_folder.relative_to(parent_path))
         # Check the subfolders
         elif entry.is_dir() and subfolders:
             yield from iterate_folder(
                 folder=entry,
                 subfolders=True,
                 file_extensions=file_extensions,
+                file_patterns=file_patterns,
                 parent_path=parent_path,
             )
 
