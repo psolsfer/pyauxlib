@@ -3,6 +3,7 @@ import logging
 import time
 import warnings
 from pathlib import Path
+from typing import Any
 
 
 class Timer:
@@ -59,7 +60,7 @@ class Timer:
         self.start()
         return self
 
-    def __exit__(self, *exc_info):
+    def __exit__(self, *exc_info: Any):
         """Stop the context manager timer"""
         self.stop()
 

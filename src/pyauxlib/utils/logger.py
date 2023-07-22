@@ -25,10 +25,9 @@ def _set_level(level: int | str | None, default_level: int | str = "INFO") -> in
         return _set_level(default_level)
 
     if isinstance(level, str):
-        level: int = logging.getLevelName(level.upper())
+        return logging.getLevelName(level.upper())
     elif not isinstance(level, int):
-        level = logging.INFO
-
+        return logging.INFO
     return level
 
 

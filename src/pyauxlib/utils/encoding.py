@@ -1,11 +1,5 @@
 import logging
-from codecs import BOM_UTF8
-from codecs import BOM_UTF16
-from codecs import BOM_UTF16_BE
-from codecs import BOM_UTF16_LE
-from codecs import BOM_UTF32
-from codecs import BOM_UTF32_BE
-from codecs import BOM_UTF32_LE
+from codecs import BOM_UTF8, BOM_UTF16, BOM_UTF16_BE, BOM_UTF16_LE, BOM_UTF32, BOM_UTF32_BE, BOM_UTF32_LE
 from pathlib import Path
 
 try:
@@ -39,7 +33,7 @@ def detect_encoding(file: str | Path) -> str | None:
         BOM_UTF32_BE: "utf_32_be",
         BOM_UTF32_LE: "utf_32_le",
     }
-
+    file = Path(file) if isinstance(file, str) else file
     try:
         with Path.open(file, "rb") as f:
             # Reads the first 5 bytes
@@ -57,9 +51,7 @@ def detect_encoding(file: str | Path) -> str | None:
                 encoding = "utf-8"
             return encoding
     except FileNotFoundError as err:
-        # TODO: how to use the logger in a module???
-        print(f"Error loading file: {file}")
-        print(err)
+        logger.warning(f"Error {err} loading file: {file}")
         return None
 
 
@@ -68,6 +60,7 @@ def detect_encoding_chardet(file: str | Path) -> str | None:
     heuristics to make an educated guess about the encoding of a file. However, this
     method is not always accurate and may be slow for large files.
     Use in cases where `detect_encoding` fails."""
+    file = Path(file) if isinstance(file, str) else file
     try:
         with Path.open(file, "rb") as f:
             raw_data = f.read()
@@ -78,6 +71,5 @@ def detect_encoding_chardet(file: str | Path) -> str | None:
         logger.warning("Install package 'chardet' for additional encoding detection.")
         return None
     except FileNotFoundError as err:
-        print(f"Error loading file: {file}")
-        print(err)
+        logger.warning(f"Error {err} loading file: {file}")
         return None

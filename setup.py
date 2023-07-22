@@ -2,8 +2,7 @@
 import re
 from pathlib import Path
 
-from setuptools import find_packages
-from setuptools import setup
+from setuptools import find_packages, setup
 
 
 def read(*names, **kwargs):
@@ -18,7 +17,7 @@ test_requirements = [
 
 setup(
     name="pyauxlib",
-    version="0.0.2",
+    version="0.0.4",
     license="BSD-3-Clause",
     description="Auxiliary library for python.",
     long_description="{}\n{}".format(
@@ -29,6 +28,7 @@ setup(
     author_email="pablosolisfernandez@gmail.com",
     url="https://github.com/psolsfer/pyauxlib",
     packages=find_packages("src"),
+    package_data={"pyauxlib": ["py.typed"]},
     package_dir={"": "src"},
     py_modules=[path.stem for path in Path("src").glob("*.py")],
     include_package_data=True,

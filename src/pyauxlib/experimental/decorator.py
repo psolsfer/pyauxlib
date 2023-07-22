@@ -1,6 +1,8 @@
 import functools
 import inspect
 import warnings
+from collections.abc import Callable
+from typing import Any
 
 import wrapt
 from deprecated.classic import ClassicAdapter
@@ -11,7 +13,7 @@ string_types = (bytes, str)
 
 # TODO: see also how they handle the deprecated decorator in sklearn:
 # sklearn.utils.deprecation
-def experimental(*args, **kwargs):
+def experimental(*args: Any, **kwargs: Any) -> functools.partial[Callable[..., Any]]:
     # REFERENCE: "adapted" from deprecated method of deprecated library
     # TODO: probably a simpler decorator can be used, w/o ClassicAdapted, ...
     """

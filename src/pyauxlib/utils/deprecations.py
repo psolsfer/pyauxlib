@@ -16,7 +16,7 @@ def warn_deprecated_argument(
     # version: in which will be removed
     # additional_msg: e.g. "Use 'other_arg' instead"
     # TODO: PROBABLY it can be improved quite a lot...
-    # TODO: Is it possible to convert it in a decorator?
+    # TODO: Is it possible to convert it to a decorator?
 
     if not any([method, argument, version]):
         msg = "Used argument from method"

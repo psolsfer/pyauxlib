@@ -1,3 +1,5 @@
+from typing import Any
+
 from pyauxlib.experimental.decorator import experimental
 
 
@@ -25,7 +27,7 @@ def list_elements_to_numeric(lst: list) -> list:
 
 
 @experimental
-def is_number(ele):
+def is_number(ele: Any) -> int | float | Any:
     """Returns an object converted to int. If it cannot be converted to int, it will
     try to convert to float.
 
@@ -45,7 +47,7 @@ def is_number(ele):
 
 
 @experimental
-def is_float(ele):
+def is_float(ele: Any) -> float | Any:
     """Returns an object converted to float, or the original object if it cannot be
     converted
 

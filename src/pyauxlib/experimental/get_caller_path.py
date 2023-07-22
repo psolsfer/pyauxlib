@@ -1,5 +1,4 @@
-from inspect import currentframe
-from inspect import getframeinfo
+from inspect import currentframe, getframeinfo
 from pathlib import Path
 from types import FrameType
 
