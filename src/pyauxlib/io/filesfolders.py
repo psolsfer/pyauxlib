@@ -59,6 +59,7 @@ def iterate_folder(
     folder: str | Path,
     file_extensions: list[str] | None = None,
     file_patterns: list[str] | None = None,
+    exclude_patterns: bool = False,
     subfolders: bool = True,
     parent_path: Path | None = None,
 ) -> Generator[FileRelPath, None, None]:
@@ -84,6 +85,8 @@ def iterate_folder(
             - ["file_?.txt"]: matches all files with names like 'file_1.txt', 'file_2.txt', etc.
             - ["file_[0-9].txt"]: equivalent to the previous example, but uses a character set
               to match any digit between 0 and 9.
+    exclude_patterns : bool, optional
+        When 'True', it will return files that do not match 'file_patterns'
     subfolders : bool, optional
         include or not subfolders, by default True
     parent_path : Path, optional
@@ -106,7 +109,7 @@ def iterate_folder(
     for entry in current_folder.iterdir():
         # Only returns files, not folders
         if entry.is_file() and any(re.match(ext, entry.suffix.lower()) for ext in file_extensions):
-            if file_patterns is None or any(fnmatch(entry.name, pattern) for pattern in file_patterns):
+            if file_patterns is None or any(fnmatch(entry.name, pattern) for pattern in file_patterns) != exclude_patterns:
                 yield FileRelPath(entry, current_folder.relative_to(parent_path))
         # Check the subfolders
         elif entry.is_dir() and subfolders:
@@ -115,6 +118,7 @@ def iterate_folder(
                 subfolders=True,
                 file_extensions=file_extensions,
                 file_patterns=file_patterns,
+                exclude_patterns=exclude_patterns,
                 parent_path=parent_path,
             )
 
