@@ -38,9 +38,9 @@ Overview
     :alt: Supported implementations
     :target: https://pypi.org/project/pyauxlib
 
-.. |commits-since| image:: https://img.shields.io/github/commits-since/psolsfer/pyauxlib/v0.0.4.svg
+.. |commits-since| image:: https://img.shields.io/github/commits-since/psolsfer/pyauxlib/v0.0.5.svg
     :alt: Commits since latest release
-    :target: https://github.com/psolsfer/pyauxlib/compare/v0.0.4...main
+    :target: https://github.com/psolsfer/pyauxlib/compare/v0.0.5...main
 
 
 

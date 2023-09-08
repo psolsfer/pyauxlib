@@ -17,7 +17,7 @@ test_requirements = [
 
 setup(
     name="pyauxlib",
-    version="0.0.4",
+    version="0.0.5",
     license="BSD-3-Clause",
     description="Auxiliary library for python.",
     long_description="{}\n{}".format(
