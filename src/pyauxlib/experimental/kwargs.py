@@ -1,3 +1,7 @@
+from pyauxlib.decorators.warnings import experimental
+
+
+@experimental
 def unknown_kwargs(kwargs: dict, recognized_kwargs: list[str]):
     """Check for unkown kwargs passed to a method/class
 

@@ -1,6 +1,6 @@
 from typing import Any
 
-from pyauxlib.experimental.decorator import experimental
+from pyauxlib.decorators.warnings import experimental
 
 
 @experimental

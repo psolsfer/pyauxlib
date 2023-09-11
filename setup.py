@@ -10,10 +10,9 @@ def read(*names, **kwargs):
         return fh.read()
 
 
-requirements = ["deprecated", "wrapt"]
-test_requirements = [
-    "pytest>=3",
-]
+requirements = ["wrapt"]
+extras = {"with_chardet": ["chardet"]}
+test_requirements = ["pytest>=3"]
 
 setup(
     name="pyauxlib",
@@ -55,10 +54,6 @@ setup(
     ],
     python_requires=">=3.10",
     install_requires=requirements,
-    extras_require={
-        # eg:
-        #   "rst": ["docutils>=0.11"],
-        #   ":python_version=="2.6"": ["argparse"],
-    },
+    extras_require=extras,
     tests_require=test_requirements,
 )

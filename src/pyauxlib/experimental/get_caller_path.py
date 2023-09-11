@@ -2,7 +2,10 @@ from inspect import currentframe, getframeinfo
 from pathlib import Path
 from types import FrameType
 
+from pyauxlib.decorators.warnings import experimental
 
+
+@experimental
 def get_caller_path() -> Path | None:
     # FIXME: Does this work as intended? Is it useful?
     """Gets the path of the caller script.
