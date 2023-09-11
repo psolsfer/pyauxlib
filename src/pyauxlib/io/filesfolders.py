@@ -124,7 +124,7 @@ def iterate_folder(
 
 
 def create_folder(path: Path, includes_file=False):
-    """Creates the folder passed in the path (if it doesn't exist).
+    """Creates the folder passed in the 'path' if it doesn't exist.
     Useful to be sure that a folder exists before saving a file.
 
     Parameters
@@ -132,18 +132,11 @@ def create_folder(path: Path, includes_file=False):
     path : Path
         Path object for the folder (can also include the file)
     includes_file : bool, optional
-        The path includes a file at the end, by default False.
+        The path includes a file at the end, by default 'False'.
     """
-
-    # NOTE: see also os.makedirs
-
     path = path.parent if includes_file else path
 
-    try:
-        path.mkdir(parents=True)
-    except FileExistsError:
-        # Defeats race condition when another thread created the path
-        pass
+    path.mkdir(parents=True, exist_ok=True)
 
 
 def clean_filename(filename: str, replacement: str = "_") -> str:
