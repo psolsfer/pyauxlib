@@ -16,7 +16,7 @@ test_requirements = ["pytest>=3"]
 
 setup(
     name="pyauxlib",
-    version="0.0.5",
+    version="0.0.6",
     license="BSD-3-Clause",
     description="Auxiliary library for python.",
     long_description="{}\n{}".format(

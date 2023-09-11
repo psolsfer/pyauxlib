@@ -17,7 +17,7 @@ project = "PyAuxLib"
 year = "2023"
 author = "Pablo Solís Fernández"
 copyright = f"{year}, {author}"
-version = release = "0.0.5"
+version = release = "0.0.6"
 
 pygments_style = "trac"
 templates_path = ["."]
