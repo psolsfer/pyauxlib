@@ -1,3 +1,4 @@
+import logging
 import re
 import time
 from collections.abc import Generator
@@ -6,6 +7,8 @@ from pathlib import Path
 from typing import NamedTuple
 
 from pyauxlib.io.utils import clean_file_extension
+
+logger = logging.getLogger(__name__)
 
 
 class FileRelPath(NamedTuple):
@@ -41,18 +44,21 @@ def iterate_files(pathobject: Path, file_extensions: list[str] | None = None) ->
         file/folder doesn't exist
     """
 
-    # File or files to be tested
+    if not pathobject.exists():
+        error_msg = f"File or folder '{pathobject}' does not exist."
+        logger.error(error_msg)
+        raise FileNotFoundError(error_msg)
+
     if pathobject.is_file():
         yield FileRelPath(pathobject, pathobject.relative_to(pathobject))
-    elif pathobject.is_dir():
+
+    if pathobject.is_dir():
         yield from iterate_folder(
             folder=pathobject,
             file_extensions=file_extensions,
             subfolders=False,
             parent_path=pathobject,
         )
-    else:
-        raise Warning("Verify that the file or folder exists.")
 
 
 def iterate_folder(
@@ -136,7 +142,11 @@ def create_folder(path: Path, includes_file=False):
     """
     path = path.parent if includes_file else path
 
-    path.mkdir(parents=True, exist_ok=True)
+    try:
+        path.mkdir(parents=True, exist_ok=True)
+    except PermissionError:
+        logger.warning("Failed to create folder '%s': no permission", path)
+        raise
 
 
 def clean_filename(filename: str, replacement: str = "_") -> str:
