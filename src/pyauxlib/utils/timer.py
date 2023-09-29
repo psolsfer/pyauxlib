@@ -1,29 +1,38 @@
+"""Module providing the Timer class for measuring and logging execution times."""
 import csv
 import io
 import logging
 import time
 import warnings
 from pathlib import Path
-from typing import Any, ClassVar, Protocol, Self
+from typing import ClassVar, Protocol, Self
+
+import wrapt
 
 
 class TimeFunc(Protocol):
+    """Protocol for functions that return the current time as a float."""
+
     def __call__(self) -> float:
+        """Get the current time.
+
+        Returns
+        -------
+        float
+            The current time.
+        """
         ...
 
 
 class Timer:
     """Timer class to measure execution times.
 
-    The timer can be managed manually, calling the `start`, `stop`,... methods.
-    It can also be used as a context manager:
-    ```python
-    with Timer(filename) as t: # This will automatically start the timer
-        # code here
-        t.add_timestamp("#1")
-        # more code
-    # The timer will automatically be stopped when exiting the context manager
-    ```
+    The timer can be managed in three ways:
+
+    1. Manually, by calling the `start`, `stop`, etc. methods.
+    2. As a context manager, which automatically starts the timer when entering the context and
+    stops it when exiting.
+    3. As a decorator, which times the execution of the decorated function.
 
     Parameters
     ----------
@@ -47,6 +56,31 @@ class Timer:
         The list of timestamps added during the timer execution.
     texts : list of str
         The list of texts associated with each timestamp.
+
+    Examples
+    --------
+    Example usage:
+
+    ```python
+    # Manual usage
+    t = Timer()
+    t.start()
+    # code here
+    t.stop()
+
+    # Context manager usage
+    with Timer() as t:
+        # code here
+        t.add_timestamp("#1")
+        # more code
+        # The timer will automatically be stopped when exiting the context manager
+
+    # Decorator usage
+    timer = Timer()
+    @timer
+    def some_function():
+        # function code
+    ```
     """
 
     TIME_FUNC: ClassVar[dict[str, TimeFunc]] = {
@@ -74,16 +108,24 @@ class Timer:
         self.reset()
 
     def __enter__(self) -> Self:
-        """Start a new timer as a context manager"""
+        """Start a new timer as a context manager."""
         self.start()
         return self
 
-    def __exit__(self, *exc_info: Any):
-        """Stop the context manager timer"""
+    def __exit__(self, *exc_info: object):
+        """Stop the context manager timer."""
         self.stop()
 
+    @wrapt.decorator
+    def __call__(self, wrapped, instance, args, kwargs):
+        """Measure the execution time of a decorated function or method."""
+        self.start()
+        result = wrapped(*args, **kwargs)
+        self.stop()
+        return result
+
     def start(self):
-        """Starts the timer."""
+        """Start the timer."""
         if self.stop_time is not None:
             self.logger("Timer has not been resetted.")
             return
@@ -92,8 +134,10 @@ class Timer:
         self.start_time = self.timestamps[-1]
 
     def stop(self) -> float:
-        """Stops the timer and returns the ellapsed time. It also saves the timestamps
-        to a file, when provided."""
+        """Stop the timer and returns the ellapsed time.
+
+        It also saves the timestamps to a file, when provided.
+        """
         if self.start_time is None:
             self.logger("Timer has not been started.")
             return 0
@@ -111,7 +155,7 @@ class Timer:
         return ellapsed_time
 
     def add_timestamp(self, text=""):
-        """Adds a timestamp with an associated text.
+        """Add a timestamp with an associated text.
 
         Parameters
         ----------
@@ -125,7 +169,7 @@ class Timer:
         self.texts.append(text)
 
     def save(self, filename: str | Path | None = None):
-        """Saves the timestamps and their associated texts to a file.
+        """Save the timestamps and their associated texts to a file.
 
         Parameters
         ----------
@@ -148,13 +192,25 @@ class Timer:
             csvfile.write(self._to_csv())
 
     def reset(self):
-        """Resets the timer."""
+        """Reset the timer."""
         self.start_time = None
         self.stop_time = None
         self.timestamps = []
         self.texts = []
 
-    def get_data(self):
+    def get_data(self) -> list[list[str]]:
+        """Get the timer data as a list of rows.
+
+        This method returns the timer data, including the comment, timestamp, time,
+        step time, and accumulated time for each timestamp, as a list of rows. The
+        first row is the header.
+
+        Returns
+        -------
+        list of list of str
+            The timer data. Each inner list represents a row. The first row is the
+            header.
+        """
         rows = []
         header = ["Comment", "Timestamp", "Time", "Step Time", "Accumulated Time"]
         rows.append(header)
@@ -185,7 +241,8 @@ class Timer:
         writer.writerows(rows)
         return csv_str.getvalue()
 
-    def __str__(self):
+    def __str__(self) -> str:
+        """Get the timer data as a printable string."""
         rows = self.get_data()
 
         # Compute column widths
@@ -194,7 +251,9 @@ class Timer:
         # Format rows as table
         table_rows = []
         for row in rows:
-            table_row = "  ".join(cell.ljust(width) for cell, width in zip(row, col_widths, strict=True))
+            table_row = "  ".join(
+                cell.ljust(width) for cell, width in zip(row, col_widths, strict=True)
+            )
             table_rows.append(table_row)
 
         return "\n".join(table_rows)

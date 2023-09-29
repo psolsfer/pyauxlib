@@ -1,18 +1,17 @@
-# from pyauxlib import main
-# from pyauxlib import pyauxlib
-"""Tests for `pyauxlib` package."""
+#!/usr/bin/env python
 
-# import pytest
+"""Tests for `PyAuxLib` package."""
 
 
-# @pytest.fixture
-# def response():
-#     """Sample pytest fixture.
+import pytest
+from pyauxlib import pyauxlib
 
-#     See more at: http://doc.pytest.org/en/latest/fixture.html
-#     """
-#     # import requests
-#     # return requests.get('https://github.com/audreyr/cookiecutter-pypackage')
+
+@pytest.fixture
+def _response() -> None:
+    """Sample pytest fixture."""
+    # import requests
+    # return requests.get('https://github.com/psolsfer/cookiecutter-pypackage-poet')
 
 
 def test_content(response):
