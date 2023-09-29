@@ -1,10 +1,11 @@
+"""Logging functions."""
 import logging
 import logging.handlers
 from pathlib import Path
 
 
 def _set_level(level: int | str | None, default_level: int | str = "INFO") -> int:
-    """Returns a correct level value.
+    """Return a correct level value.
 
     Parameters
     ----------
@@ -20,18 +21,16 @@ def _set_level(level: int | str | None, default_level: int | str = "INFO") -> in
     -------
     The level as an int
     """
-
     if level is None:
         return _set_level(default_level)
-
     if isinstance(level, str):
         return logging.getLevelName(level.upper())
-    elif not isinstance(level, int):
+    if not isinstance(level, int):
         return logging.INFO
     return level
 
 
-def init_logger(
+def init_logger(  # noqa: PLR0913
     name: str,
     level: int | str = "INFO",
     level_console: int | str | None = None,
@@ -42,7 +41,7 @@ def init_logger(
     output_console: bool = True,
     output_format: str = "%(asctime)s - %(name)s - %(levelname)s - %(message)s",
 ) -> logging.Logger:
-    """Initializes the logger
+    """Initialize the logger.
 
     Parameters
     ----------
@@ -73,7 +72,6 @@ def init_logger(
     logging.Logger
         logger
     """
-
     # FIXME Need some way to handle if the passed level string is not correct
     level = _set_level(level)
 
@@ -86,7 +84,9 @@ def init_logger(
 
     handler_list: list[logging.Handler] = []
     if output_file:
-        file_handler = logging.handlers.RotatingFileHandler(filename=output_file, maxBytes=file_size, backupCount=5)
+        file_handler = logging.handlers.RotatingFileHandler(
+            filename=output_file, maxBytes=file_size, backupCount=5
+        )
         file_handler.setLevel(level_file)
         file_handler.setFormatter(formatter)
         handler_list.append(file_handler)

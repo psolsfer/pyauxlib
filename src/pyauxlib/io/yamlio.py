@@ -1,3 +1,4 @@
+"""Yaml-related functions."""
 import logging
 import re
 from functools import partial
@@ -10,11 +11,13 @@ logger = logging.getLogger(__name__)
 
 
 def _loader_scientific_notation():
-    """Returns a yaml loader that can parse numbers in scientific notation as numbers
+    """Yaml loader with scientific notation.
+
+    Returns a yaml loader that can parse numbers in scientific notation as numbers
     instead of string. This is because library 'pyyaml' uses YAML 1.1 spec instead of
     YAML 1.2 spec. See:
-    https://github.com/yaml/pyyaml/issues/173
-    https://stackoverflow.com/a/30462009
+    # REFERENCE https://github.com/yaml/pyyaml/issues/173
+    # REFERENCE https://stackoverflow.com/a/30462009
     """
     loader = yaml.FullLoader
     loader.add_implicit_resolver(
@@ -35,8 +38,9 @@ def _loader_scientific_notation():
 
 
 def load_yaml(file: Path, safe_load: bool = False) -> dict:
-    """Loads a yaml file and returns it as a dictionary.
-    If file is not found, returns an empty dictionary.
+    """Load a yaml file and returns it as a dictionary.
+
+     R eturns an empty dictionary if the file is not found,.
 
     Parameters
     ----------
@@ -50,7 +54,6 @@ def load_yaml(file: Path, safe_load: bool = False) -> dict:
     dict
         dictionary with the the yaml contents
     """
-
     load = yaml.safe_load if safe_load else partial(yaml.load, Loader=_loader_scientific_notation())
 
     try:

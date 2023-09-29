@@ -1,3 +1,4 @@
+"""Experimental functions related to lists."""
 from typing import Any
 
 from pyauxlib.decorators.warnings import experimental
@@ -5,7 +6,8 @@ from pyauxlib.decorators.warnings import experimental
 
 @experimental
 def list_elements_to_numeric(lst: list) -> list:
-    """Converts to numeric values all the possible elements of a list.
+    """Convert to numeric values all the possible elements of a list.
+
     First try to convert to int, and then to float. Elements that cannot be converted
     are left untouched.
 
@@ -28,8 +30,7 @@ def list_elements_to_numeric(lst: list) -> list:
 
 @experimental
 def is_number(ele: Any) -> int | float | Any:
-    """Returns an object converted to int. If it cannot be converted to int, it will
-    try to convert to float.
+    """Return an object converted to int first, and to float if not possible.
 
     Parameters
     ----------
@@ -48,8 +49,7 @@ def is_number(ele: Any) -> int | float | Any:
 
 @experimental
 def is_float(ele: Any) -> float | Any:
-    """Returns an object converted to float, or the original object if it cannot be
-    converted
+    """Return an object converted to float, or the same object if it cannot be converted.
 
     Parameters
     ----------

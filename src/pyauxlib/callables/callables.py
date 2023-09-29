@@ -1,75 +1,98 @@
+"""Utilities for working with callable objects."""
 import inspect
-import sys
+import logging
 from collections.abc import Callable
 
+from pyauxlib.decorators.warnings import experimental
 
-def call_with_arguments(*args: dict, callable_object: Callable) -> Callable:
-    """Check if the required arguments of a callable object are included in the
-    passed arguments, and returns the callable_object(arguments)
+logger = logging.getLogger(__name__)
+
+
+@experimental
+def call_with_arguments(*args: dict, callable_obj: Callable) -> Callable:
+    """Execute a callable object with provided arguments.
+
+    This function checks if the required arguments of a callable object are included in the
+    passed arguments, and returns the callable_object(arguments).
 
     Parameters
     ----------
     *args : dict
-        variable number of dictionaries with arguments to be passed to the callable.
+        Variable number of dictionaries with arguments to be passed to the callable.
         In case of duplicate entries, the last values from last dictionaries overwrite
         those of the first ones.
-    callable_object : Callable
-        callable object (function, class)
+    callable_obj : Callable
+        Callable object (function, class).
 
     Returns
     -------
     Callable
-        the callable object with the passed arguments
+        The callable object with the passed arguments.
 
     Raises
     ------
     TypeError
-        required argument for the callable object is absent in arguments
+        If a required argument for the callable object is absent in arguments, if the
+        provided object is not callable, or if the provided callable object does not
+        accept either *args or **kwargs.
     """
-
-    if callable(callable_object):
-        # Check the parameters of callable_object
-        params = inspect.signature(callable_object).parameters
+    if callable(callable_obj):
+        sig = inspect.signature(callable_obj)
+        params = sig.parameters
+        callable_accepts_kwargs = sig.varkw is not None
+        callable_accepts_args = sig.varargs is not None
     else:
-        # TODO: handle the fact that the object passed is not callable...
-        sys.exit(1)
+        error_msg = "The provided object is not callable."
+        logger.error(error_msg)
+        raise TypeError(error_msg)
 
-    argskwargs = _get_argskwargs(callable_object)
+    if not callable_accepts_args and not callable_accepts_kwargs:
+        error_msg = "The provided callable object does not accept *args or **kwargs."
+        logger.error(error_msg)
+        raise TypeError(error_msg)
 
-    # Merge all the dictionaries in *args into a single one
-    # Values from last dictionaries in *args will overwrite existing keys in the previous
+    argskwargs = _get_argskwargs(callable_obj)
+
+    # Merge all the dictionaries in *args
+    # Values from last dictionaries overwrite existing keys in the previous
     arguments = {key: val for d in args for key, val in d.items()}
 
-    # TODO: do anything with the arguments passed but not in the function???
-    # Just pass them as **kwargs or raise a warning??"""
-    # If pass them as *args/**kwargs, then need to see if the callable accept them,
-    # in the 'params_spec' of get _get_argskwargs (varargs, varkw, as seen in
-    # https://docs.python.org/3/library/inspect.html#inspect.getfullargspec
-    {k: v for (k, v) in arguments.items() if k not in params.keys()}
-
+    extra_args = {k: v for (k, v) in arguments.items() if k not in params}
     kwargs = {}
+
+    if extra_args:
+        if callable_accepts_kwargs:  # Replace with actual check
+            kwargs.update(extra_args)
+        else:
+            logger.warning("Extra arguments were passed: %s", extra_args.keys())
+            # Or: raise TypeError(f"Extra arguments were passed: {extra_args}")
 
     for arg_name, v in params.items():
         # Required argument (doesn't have a default value in callable_object)
         # *args and **kwargs are not required
-        required_argument = (v.default == inspect.Parameter.empty) if arg_name not in argskwargs else False
-
-        arg_value = arguments.get(arg_name)
+        required_argument = (
+            (v.default == inspect.Parameter.empty) if arg_name not in argskwargs else False
+        )
 
         if required_argument:
-            if arg_name in arguments.keys():
+            if arg_name in arguments:
                 kwargs[arg_name] = arguments[arg_name]
             else:
-                raise TypeError(f"Argument '{arg_name}' is missing")
-        elif arg_name in arguments.keys():
-            # ??? Returns the default value if 'None' in arguments. Ok?
-            kwargs[arg_name] = arg_value if arg_value is not None else v.default
+                error_msg = f"Argument '{arg_name}' is missing"
+                raise TypeError(error_msg)
+        elif arg_name in arguments:
+            kwargs[arg_name] = arguments[arg_name] if arg_name in arguments else v.default
 
-    return callable_object(**kwargs)  # FIXME Some Callables don't accept kwargs (e.g. math.floor)
+    if callable_accepts_kwargs:
+        return callable_obj(**kwargs)
+
+    # Converts the kwargs to args
+    args = [kwargs[name] for name in sig.parameters]
+    return callable_obj(*args)
 
 
-def _get_argskwargs(callable: Callable) -> list[str | None]:
-    """Returns a list with the args and kwargs of a callable
+def _get_argskwargs(callable_obj: Callable) -> list[str | None]:
+    """Return a list with the args and kwargs of a callable.
 
     Parameters
     ----------
@@ -81,7 +104,6 @@ def _get_argskwargs(callable: Callable) -> list[str | None]:
     list[str]
         list of args and kwargs
     """
-
-    params_spec = inspect.getfullargspec(callable)
+    params_spec = inspect.getfullargspec(callable_obj)
 
     return [params_spec.varargs, params_spec.varkw]

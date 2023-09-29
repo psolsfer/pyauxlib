@@ -1,9 +1,25 @@
-"""Utilities for handling the Byte Order Mark (BOM) of files"""
+"""Utilities for handling the Byte Order Mark (BOM) of files."""
 
-from codecs import BOM_UTF8, BOM_UTF16, BOM_UTF16_BE, BOM_UTF16_LE, BOM_UTF32, BOM_UTF32_BE, BOM_UTF32_LE
+from codecs import (
+    BOM_UTF8,
+    BOM_UTF16,
+    BOM_UTF16_BE,
+    BOM_UTF16_LE,
+    BOM_UTF32,
+    BOM_UTF32_BE,
+    BOM_UTF32_LE,
+)
 from pathlib import Path
 
-bom_codecs = [BOM_UTF8, BOM_UTF16, BOM_UTF16_BE, BOM_UTF16_LE, BOM_UTF32, BOM_UTF32_BE, BOM_UTF32_LE]
+bom_codecs = [
+    BOM_UTF8,
+    BOM_UTF16,
+    BOM_UTF16_BE,
+    BOM_UTF16_LE,
+    BOM_UTF32,
+    BOM_UTF32_BE,
+    BOM_UTF32_LE,
+]
 
 
 def remove_bom(filename: Path | str, output_filename: Path | str | None = None):

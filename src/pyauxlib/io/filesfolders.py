@@ -1,3 +1,4 @@
+"""Functions related to files and folders."""
 import logging
 import re
 import time
@@ -12,38 +13,48 @@ logger = logging.getLogger(__name__)
 
 
 class FileRelPath(NamedTuple):
-    # Named tuple with the path of a file and the relative path to a parent path
+    """Named tuple with the path of a file and the relative path to a parent path.
+
+    Attributes
+    ----------
+    file : Path
+        The absolute path of the file.
+    rel_path : Path
+        The relative path of the file with respect to a parent directory.
+    """
+
     file: Path
     rel_path: Path
 
 
-def iterate_files(pathobject: Path, file_extensions: list[str] | None = None) -> Generator[FileRelPath, None, None]:
-    """Given a Path object, it returns an iterable of files
-        - If the Path is a file, the only file is itself
-        - If the Path is folder, returns all the files in the folder with a given
-        extension. It doesn't recurse subfolders.
+def iterate_files(
+    pathobject: Path, file_extensions: list[str] | None = None
+) -> Generator[FileRelPath, None, None]:
+    """Yield files from a given path with optional file extension filtering.
+
+    This function takes a Path object and yields files from it. If the Path is a file,
+    it yields the file itself. If the Path is a directory, it yields all files in the
+    directory with a given extension, without recursing into subdirectories.
 
     Parameters
     ----------
     pathobject : Path
-        Path object to look for files
+        The Path object to search for files.
     file_extensions : list[str], optional
-        Extension of the files to be returned, by default None (all the extensions).
-        It doesn't work if ``pathobject`` is a file.
+        A list of file extensions to filter the files. If None (default), all files are yielded.
+        This parameter is ignored if `pathobject` is a file.
 
     Returns
     -------
-    Generator
-        Generator with a FileRelPath class, including the found files with their path
-        relative to the parent_path.
-        If ``pathobject`` is a file, yields only the values for the file itself.
+    Generator[FileRelPath, None, None]
+        A generator yielding FileRelPath objects for each found file. Each FileRelPath includes
+        the absolute path of the file and its path relative to `pathobject`.
 
     Raises
     ------
-    Warning
-        file/folder doesn't exist
+    FileNotFoundError
+        If `pathobject` does not exist.
     """
-
     if not pathobject.exists():
         error_msg = f"File or folder '{pathobject}' does not exist."
         logger.error(error_msg)
@@ -61,7 +72,7 @@ def iterate_files(pathobject: Path, file_extensions: list[str] | None = None) ->
         )
 
 
-def iterate_folder(
+def iterate_folder(  # noqa: PLR0913
     folder: str | Path,
     file_extensions: list[str] | None = None,
     file_patterns: list[str] | None = None,
@@ -69,22 +80,22 @@ def iterate_folder(
     subfolders: bool = True,
     parent_path: Path | None = None,
 ) -> Generator[FileRelPath, None, None]:
-    """Iterate through a folder and its subfolders looking for files with a given
-    extension
+    """Yield files from a given folder, optionally filtering by extension and pattern.
+
+    This function iterates through a folder and its subfolders (if `subfolders` is True),
+    yielding files with specified extensions and name patterns. If the folder is a file,
+    it yields the file itself.
 
     Parameters
     ----------
     folder : str | Path
-        parent folder in which the search will start
+        The parent folder to start the search.
     file_extensions : list[str], optional
-        list of extensions of the files that will be looked for. By default None.
-        If not passed, it returns all the files.
+        List of file extensions to filter by. If None (default), all files are yielded.
     file_patterns : list[str], optional
-        list of patterns that the file names should match. By default None.
-        If not passed, it returns all the files. If multiple patterns are provided,
-        a file will be returned if its name matches any of the patterns (i.e., the
-        patterns are combined using a logical 'OR').
-        The patterns can include wildcards, such as '*' and '?', to match multiple
+        List of patterns that the file names should match. If None (default), all files are yielded.
+        If multiple patterns are provided, a file is returned if its name matches any pattern.
+        Patterns can include wildcards like '*' and '?', to match multiple
         characters or a single character, respectively. For example:
             - ["*before*"]: matches all files that have the word "before" in their name.
             - ["*.txt"]: matches all files with the '.txt' extension.
@@ -92,19 +103,24 @@ def iterate_folder(
             - ["file_[0-9].txt"]: equivalent to the previous example, but uses a character set
               to match any digit between 0 and 9.
     exclude_patterns : bool, optional
-        When 'True', it will return files that do not match 'file_patterns'
+        If True, returns files that do not match `file_patterns`.
     subfolders : bool, optional
-        include or not subfolders, by default True
+        If True (default), includes subfolders in the search.
     parent_path : Path, optional
-        path of the parent, used to return the relative paths to reconstruct the folder hierarchy
+        The path of the parent, used to return the relative paths to reconstruct the folder
+        hierarchy
 
     Yields
     ------
-    _type_
-        generator with a FileRelPath class, including the found files with their path
-        relative to the parent_path
-    """
+    FileRelPath
+        A FileRelPath object for each found file, including the absolute path and
+        the path relative to `parent_path`.
 
+    Raises
+    ------
+    FileNotFoundError
+        If `folder` does not exist.
+    """
     current_folder = Path(folder).parent if Path(folder).is_file() else Path(folder)
 
     file_extensions = [".*"] if file_extensions is None else file_extensions
@@ -115,7 +131,11 @@ def iterate_folder(
     for entry in current_folder.iterdir():
         # Only returns files, not folders
         if entry.is_file() and any(re.match(ext, entry.suffix.lower()) for ext in file_extensions):
-            if file_patterns is None or any(fnmatch(entry.name, pattern) for pattern in file_patterns) != exclude_patterns:
+            if (
+                file_patterns is None
+                or any(fnmatch(entry.name, pattern) for pattern in file_patterns)
+                != exclude_patterns
+            ):
                 yield FileRelPath(entry, current_folder.relative_to(parent_path))
         # Check the subfolders
         elif entry.is_dir() and subfolders:
@@ -130,7 +150,8 @@ def iterate_folder(
 
 
 def create_folder(path: Path, includes_file=False):
-    """Creates the folder passed in the 'path' if it doesn't exist.
+    """Create the folder passed in the 'path' if it doesn't exist.
+
     Useful to be sure that a folder exists before saving a file.
 
     Parameters
@@ -150,7 +171,7 @@ def create_folder(path: Path, includes_file=False):
 
 
 def clean_filename(filename: str, replacement: str = "_") -> str:
-    """Removes illegal characters from a filename
+    """Remove illegal characters from a filename.
 
     Parameters
     ----------
@@ -165,7 +186,6 @@ def clean_filename(filename: str, replacement: str = "_") -> str:
     str
         clean name
     """
-
     illegal_characters = "!@#$%^&*()[]{};:,/<>?'\\'|`~-=_+"
 
     replacement = "_" if replacement in illegal_characters else replacement
@@ -175,21 +195,31 @@ def clean_filename(filename: str, replacement: str = "_") -> str:
 
 
 def add_folder_timestamp(rootdir: str | Path, fmt: str = "run_%Y_%m_%d-%H_%M_%S") -> Path:
-    """Adds a folder with timestamp to the given path
+    """Create a new folder with a timestamp in the given directory.
+
+    This function takes a directory path and creates a new folder within that directory.
+    The name of the new folder is a timestamp formatted according to the provided format string.
 
     Parameters
     ----------
     rootdir : str | Path
-        path of the original folder in which the new folder will be added
-
+        The path of the directory where the new folder will be created.
     fmt : str, optional
-        format of the timestamp, by default "run_%Y_%m_%d-%H_%M_%S"
+        The format of the timestamp to be used as the new folder's name.
+        The format is defined using strftime directives. Default is "run_%Y_%m_%d-%H_%M_%S".
 
     Returns
     -------
     Path
-        new path
-    """
+        The path of the newly created folder.
 
+    Examples
+    --------
+    ```python
+    new_folder_path = add_folder_timestamp("/path/to/directory", "run_%Y_%m_%d-%H_%M_%S")
+    print(new_folder_path)
+    # Output: /path/to/directory/run_2023_04_05-16_25_03
+    ```
+    """
     run_id = time.strftime(fmt)
     return Path(rootdir, run_id)

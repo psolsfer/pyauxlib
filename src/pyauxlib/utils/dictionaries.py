@@ -1,5 +1,8 @@
+"""Functions related to dictionaries."""
+
+
 def remove_keys(dictionary: dict, remove: list) -> dict:
-    """Removes the keys from a dictionary specified in the list `remove`.
+    """Remove the keys from a dictionary specified in the list `remove`.
 
     If an element from `remove` is not a key in `dict`, then it will ignore (won't raise
     any error)
@@ -16,7 +19,6 @@ def remove_keys(dictionary: dict, remove: list) -> dict:
     dict
         Dictionary with the specified keys removed.
     """
-
     new_dict = dictionary.copy()
     for k in remove:
         new_dict.pop(k, None)
@@ -25,21 +27,36 @@ def remove_keys(dictionary: dict, remove: list) -> dict:
 
 
 def is_empty_or_none(dictionary: dict) -> bool:
-    """Returns if a dictionary is empty, or if all the values are `None`.
+    """Check if a dictionary is empty or all its values are `None`.
 
-    .. note::
-        A value of '0' is not considered empty.
+    This function checks if a dictionary is empty or if all its values are `None`.
+    It also checks nested dictionaries. A value of '0' is not considered empty.
+
+    Parameters
+    ----------
+    dictionary : dict
+        The dictionary to check.
+
+    Returns
+    -------
+    bool
+        True if the dictionary is empty or all its values are `None`, False otherwise.
 
     Examples
     --------
-    >>>nested_dict = {'a': {'b': None, 'c': {}}}
-    >>>print(is_empty_or_none(nested_dict))  # Output: True
+    ```python
+    nested_dict = {'a': {'b': None, 'c': {}}}
+    print(is_empty_or_none(nested_dict))
+    # Output: True
 
-    >>>nested_dict = {'a': {'b': None, 'c': {'d': None}}}
-    >>>print(is_empty_or_none(nested_dict))  # Output: True
+    nested_dict = {'a': {'b': None, 'c': {'d': None}}}
+    print(is_empty_or_none(nested_dict))
+    # Output: True
 
-    >>>nested_dict = {'a': {'b': 0, 'c': {'d': None}}}
-    >>>print(is_empty_or_none(nested_dict))  # Output: False
+    nested_dict = {'a': {'b': 0, 'c': {'d': None}}}
+    print(is_empty_or_none(nested_dict))
+    # Output: False
+    ```
     """
     if not dictionary:
         return True

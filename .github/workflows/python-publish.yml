@@ -11,13 +11,17 @@ name: Upload Python Package
 on:
   release:
     types: [published]
-  
+
   push:
     tags:
       - 'v*'
 
 permissions:
   contents: read
+
+env:
+    PYTHON_VERSION: "3.11"
+
 
 jobs:
   deploy:
@@ -27,17 +31,32 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     - name: Set up Python
-      uses: actions/setup-python@v3
+      uses: actions/setup-python@v4
       with:
-        python-version: '3.x'
+        python-version: ${{ env.PYTHON_VERSION }}
+    - name: Install Poetry
+      run: |
+          pip install --no-input poetry
     - name: Install dependencies
       run: |
-        python -m pip install --upgrade pip
-        pip install build
+          poetry install
+    - name: Run style checks
+      run: |
+          invoke lint
+          invoke type-check
     - name: Build package
-      run: python -m build
+      run: |
+          poetry build
+    {%- if cookiecutter.private_package_repository_name %}
     - name: Publish package
-      uses: pypa/gh-action-pypi-publish@27b31702a0e7fc50959f5ad993c78deac1bdfc29
+      run: |
+        poetry config repositories.private "{{ cookiecutter.private_package_repository_url.replace('simple/', '').replace('simple', '') }}"
+        poetry config http-basic.private "${{ secrets.POETRY_HTTP_BASIC_PRIVATE_USERNAME }}" "${{ secrets.POETRY_HTTP_BASIC_PRIVATE_PASSWORD }}"
+        poetry publish --build --repository private
+    {%- else %}
+    - name: Publish package
+      uses: pypa/gh-action-pypi-publish@release/v1
       with:
         user: __token__
         password: ${{ secrets.PYPI_API_TOKEN }}
+    {%- endif %}

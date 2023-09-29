@@ -1,3 +1,5 @@
+"""Decorators for warning messages."""
+
 import inspect
 import warnings
 from collections.abc import Callable
@@ -10,8 +12,13 @@ _routine_stacklevel = 2
 __all__ = ["deprecated", "deprecated_argument", "experimental"]
 
 
-def _get_msg(decorator_name: str, wrapped: Callable[..., Any], reason: str | None = None, version: str | None = None) -> str:
-    """To add messages to the decorators"""
+def _get_msg(
+    decorator_name: str,
+    wrapped: Callable[..., Any],
+    reason: str | None = None,
+    version: str | None = None,
+) -> str:
+    """Add messages to the decorators."""
     if inspect.isclass(wrapped):
         fmt = f"Call to {decorator_name} class {{name}}."
     else:
@@ -24,12 +31,12 @@ def _get_msg(decorator_name: str, wrapped: Callable[..., Any], reason: str | Non
 
 
 def _warning_decorator(decorator_name: str) -> Callable[..., Any]:
-    """
-    This is a decorator factory that creates decorators to emit warnings.
-    It is used to create actual decorators such as 'experimental' and 'deprecated'.
+    """Create decorators to emit warnings.
+
+    This is a decorator factory used to create actual decorators such as 'experimental' and
+    'deprecated'.
     The 'decorator_name' parameter specifies the name of the decorator being created.
     """
-
     # REFERENCE: adapted from 'deprecated' of deprecated library
     # REFERENCE: see also how they handle the deprecated decorator in sklearn
 
@@ -45,27 +52,24 @@ def _warning_decorator(decorator_name: str) -> Callable[..., Any]:
 
             return wrapper_without_args(args[0])
 
-        else:
-
-            @wrapt.decorator
-            def wrapper_with_args(wrapped, instance, args_, kwargs_) -> Any:
-                msg = _get_msg(decorator_name, wrapped, kwargs.get("reason"), kwargs.get("version"))
-                if action := kwargs.get("action"):
-                    with warnings.catch_warnings():
-                        warnings.simplefilter(action)
-                        warnings.warn(msg, category=category, stacklevel=_routine_stacklevel)
-                else:
+        @wrapt.decorator
+        def wrapper_with_args(wrapped, instance, args_, kwargs_) -> Any:
+            msg = _get_msg(decorator_name, wrapped, kwargs.get("reason"), kwargs.get("version"))
+            if action := kwargs.get("action"):
+                with warnings.catch_warnings():
+                    warnings.simplefilter(action)
                     warnings.warn(msg, category=category, stacklevel=_routine_stacklevel)
-                return wrapped(*args_, **kwargs_)
+            else:
+                warnings.warn(msg, category=category, stacklevel=_routine_stacklevel)
+            return wrapped(*args_, **kwargs_)
 
-            return wrapper_with_args
+        return wrapper_with_args
 
     return actual_decorator
 
 
 def experimental(*args, **kwargs) -> Callable[..., Any]:
-    """
-    Decorator to mark functions or classes as experimental.
+    """Mark functions or classes as experimental.
 
     Parameters
     ----------
@@ -91,7 +95,10 @@ def experimental(*args, **kwargs) -> Callable[..., Any]:
     def function(a, b):
         return [a, b]
 
-    @experimental(reason="use another function", version="1.2.0", category=FutureWarning, action="error")
+    @experimental(reason="use another function",
+        version="1.2.0",
+        category=FutureWarning,
+        action="error")
     def function(a, b):
         return [a, b]
     ```
@@ -102,7 +109,7 @@ def experimental(*args, **kwargs) -> Callable[..., Any]:
 
 def deprecated(*args, **kwargs):
     """
-    Decorator to mark functions or classes as deprecated.
+    Mark functions or classes as deprecated.
 
     Parameters
     ----------
@@ -128,7 +135,10 @@ def deprecated(*args, **kwargs):
     def function(a, b):
         return [a, b]
 
-    @deprecated(reason="use another function", version="1.2.0", category=DeprecationWarning, action="error")
+    @deprecated(reason="use another function",
+        version="1.2.0",
+        category=DeprecationWarning,
+        action="error")
     def function(a, b):
         return [a, b]
     ```
@@ -143,9 +153,9 @@ def deprecated_argument(
     additional_msg: str = "",
     category=DeprecationWarning,
 ) -> Callable[..., Any]:
-    """
-    Decorator that warns of a deprecated argument.
-    It should be used on the function or method where the deprecated argument is being used.
+    """Warn of a deprecated argument.
+
+    Used by decorating the function or method in which the argument is being deprecated.
 
     Parameters
     ----------
@@ -167,15 +177,24 @@ def deprecated_argument(
     --------
     One deprecated argument:
     ```python
-    @deprecated_argument(arguments=["my_arg1"], version="2.0", additional_msg="Use 'other_arg' instead")
+    @deprecated_argument(
+        arguments=["my_arg1"],
+        version="2.0",
+        additional_msg="Use 'other_arg' instead")
     def my_func(my_arg1=None, my_arg2=None, other_arg=None):
         pass
     ```
 
-    Multiple arguments can be deprecated:
+    Multiple arguments can be deprecated by adding multiple decorators:
     ```python
-    @deprecated_argument(arguments=["my_arg1"], version="2.0", additional_msg="Use 'other_arg' instead")
-    @deprecated_argument(arguments=["my_arg2"], version="3.0", additional_msg="Use 'yet_another_arg' instead")
+    @deprecated_argument(
+        arguments=["my_arg1"],
+        version="2.0",
+        additional_msg="Use 'other_arg' instead")
+    @deprecated_argument(
+        arguments=["my_arg2"],
+        version="3.0",
+        additional_msg="Use 'yet_another_arg' instead")
     def my_func(my_arg1=None, my_arg2=None, other_arg=None):
         pass
     ```

@@ -1,3 +1,4 @@
+"""Basic memory tracker."""
 import tracemalloc
 from tracemalloc import Snapshot, StatisticDiff
 from typing import Self
@@ -29,13 +30,13 @@ class MemoryTracker:
         self.peak: int = 0
 
     def __enter__(self) -> Self:
-        """Start a new MemoryTracker as a context manager"""
+        """Start a new MemoryTracker as a context manager."""
         tracemalloc.start()
         self.start_snapshot = tracemalloc.take_snapshot()
         return self
 
-    def __exit__(self, *args: tuple) -> None:
-        """Stop the context manager MemoryTracker"""
+    def __exit__(self, *args: object) -> None:
+        """Stop the context manager MemoryTracker."""
         self.stop_snapshot = tracemalloc.take_snapshot()
         self.peak = tracemalloc.get_traced_memory()[1]
         tracemalloc.stop()
@@ -56,7 +57,8 @@ class MemoryTracker:
         Returns
         -------
         list of tracemalloc.StatisticDiff or None
-            The list of statistics about the change in memory usage between the start and stop snapshots.
+            The list of statistics about the change in memory usage between the start and stop
+            snapshots.
             Returns None if either start_snapshot or stop_snapshot is None.
         """
         if not self.start_snapshot or not self.stop_snapshot:
