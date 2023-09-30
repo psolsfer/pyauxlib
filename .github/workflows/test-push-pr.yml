@@ -34,7 +34,7 @@ jobs:
     #   run: poetry run invoke test --tox-env ${{ matrix.tox-env }}
       run: poetry run tox -e $${{ matrix.tox-env }}
 
-  finish:
-    needs: test
-    if: $${{ always() }}
-    runs-on: ubuntu-latest
+#   finish:
+#     needs: test
+#     if: $${{ always() }}
+#     runs-on: ubuntu-latest
