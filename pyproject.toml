@@ -106,12 +106,12 @@ mkdocs-awesome-pages-plugin = ">=2.9.2"
 bump_message = "bump(release): v$current_version → v$new_version"
 tag_format = "v$version"
 update_changelog_on_bump = true
-version = "0.0.0"
+version = "0.0.6"
 version_files = [
     "pyproject.toml:version",
-    "docs/conf.py:version",
-    "docs/conf.py:release",
-    "str/pyauxlib/__init__.py:__version__"
+    #"docs/conf.py:version",
+    #"docs/conf.py:release",
+    "src/pyauxlib/__init__.py:__version__"
     ]
 
 [tool.mypy]  # https://mypy.readthedocs.io/en/latest/config_file.html
