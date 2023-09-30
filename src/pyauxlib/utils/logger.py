@@ -101,14 +101,14 @@ def init_logger(  # noqa: PLR0913
 
     # ??? Do I need to set the basicConfig for the root logger?
     # Check if the parent is the root logger
-    # if logger.parent == logging.getLogger():
+    """# if logger.parent == logging.getLogger():
     #     logging.basicConfig(
     #         level=level,
     #         # format=output_format,
     #         handlers=handler_list,
     #     )
 
-    # logger = logging.getLogger(name)
+    # logger = logging.getLogger(name)"""
 
     logger.setLevel(level=level)
     logger.propagate = propagate
