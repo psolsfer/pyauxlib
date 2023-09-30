@@ -39,24 +39,16 @@ jobs:
           pip install --no-input poetry
     - name: Install dependencies
       run: |
-          poetry install
+          poetry install --with dev
     - name: Run style checks
       run: |
-          invoke lint
-          invoke type-check
+          poetry run invoke lint
+          poetry run invoke type-check
     - name: Build package
       run: |
           poetry build
-    {%- if cookiecutter.private_package_repository_name %}
-    - name: Publish package
-      run: |
-        poetry config repositories.private "{{ cookiecutter.private_package_repository_url.replace('simple/', '').replace('simple', '') }}"
-        poetry config http-basic.private "${{ secrets.POETRY_HTTP_BASIC_PRIVATE_USERNAME }}" "${{ secrets.POETRY_HTTP_BASIC_PRIVATE_PASSWORD }}"
-        poetry publish --build --repository private
-    {%- else %}
     - name: Publish package
       uses: pypa/gh-action-pypi-publish@release/v1
       with:
         user: __token__
         password: ${{ secrets.PYPI_API_TOKEN }}
-    {%- endif %}
