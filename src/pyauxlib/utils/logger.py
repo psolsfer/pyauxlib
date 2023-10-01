@@ -5,13 +5,20 @@ from pathlib import Path
 
 
 def _set_level(level: int | str | None, default_level: int | str = "INFO") -> int:
-    """Return a correct level value.
+    """Return a correct logging level value.
+
+    This function takes a logging level as input, which can be either an integer, a string, or None.
+    If the level is a string, it should be one of the following:
+        ['CRITICAL', 'FATAL', 'ERROR', 'WARN', 'WARNING', 'INFO', 'DEBUG', 'NOTSET'].
+    Note that lower case letters can also be used.
+
+    If the level is None , the function will return the default_level.
 
     Parameters
     ----------
     level : int | str | None
         level of the logger, by "INFO"
-        Any of the levers of logging can be passed as a string:
+        Any of the levels of logging can be passed as a string:
         ['CRITICAL', 'FATAL', 'ERROR', 'WARN', 'WARNING', 'INFO', 'DEBUG', 'NOTSET']
         Note that lower case letters can also be used
     default_level : int | str, optional
@@ -19,14 +26,28 @@ def _set_level(level: int | str | None, default_level: int | str = "INFO") -> in
 
     Returns
     -------
-    The level as an int
+    int
+        The numeric value of the logging level.
+
+    Raises
+    ------
+    TypeError
+        If `level` is not None, a string, or an integer.
+    ValueError
+        If `level` is a string but not a valid logging level.
     """
+    if level is not None and not isinstance(level, (str | int)):
+        raise TypeError
+
     if level is None:
         return _set_level(default_level)
     if isinstance(level, str):
-        return logging.getLevelName(level.upper())
-    if not isinstance(level, int):
-        return logging.INFO
+        level_upper = level.upper()
+        if level_upper not in logging._nameToLevel:  # noqa: SLF001
+            error_msg = f"Invalid logging level: {level}"
+            raise ValueError(error_msg)
+        return int(logging.getLevelName(level.upper()))
+
     return level
 
 

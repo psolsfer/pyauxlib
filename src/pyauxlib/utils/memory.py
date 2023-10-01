@@ -24,7 +24,7 @@ class MemoryTracker:
         The peak memory usage during the execution of the code block.
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         self.start_snapshot: Snapshot | None = None
         self.stop_snapshot: Snapshot | None = None
         self.peak: int = 0

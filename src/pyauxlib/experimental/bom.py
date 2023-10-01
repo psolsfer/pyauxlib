@@ -22,7 +22,7 @@ bom_codecs = [
 ]
 
 
-def remove_bom(filename: Path | str, output_filename: Path | str | None = None):
+def remove_bom(filename: Path | str, output_filename: Path | str | None = None) -> None:
     """
     Remove the Byte Order Mark (BOM) from a file.
 
@@ -38,6 +38,7 @@ def remove_bom(filename: Path | str, output_filename: Path | str | None = None):
     FileNotFoundError
         If the input file does not exist.
     """
+    filename = Path(filename)
     # Open the file in binary mode, read it in, and remove the BOM
     with Path.open(filename, "rb") as file:
         content = file.read()

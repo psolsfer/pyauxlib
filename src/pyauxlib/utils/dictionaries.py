@@ -1,7 +1,8 @@
 """Functions related to dictionaries."""
+from typing import Any
 
 
-def remove_keys(dictionary: dict, remove: list) -> dict:
+def remove_keys(dictionary: dict[Any, Any], remove: list[str]) -> dict[Any, Any]:
     """Remove the keys from a dictionary specified in the list `remove`.
 
     If an element from `remove` is not a key in `dict`, then it will ignore (won't raise
@@ -26,7 +27,7 @@ def remove_keys(dictionary: dict, remove: list) -> dict:
     return new_dict
 
 
-def is_empty_or_none(dictionary: dict) -> bool:
+def is_empty_or_none(dictionary: dict[Any, Any]) -> bool:
     """Check if a dictionary is empty or all its values are `None`.
 
     This function checks if a dictionary is empty or if all its values are `None`.

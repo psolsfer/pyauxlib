@@ -5,7 +5,7 @@ from pyauxlib.decorators.warnings import experimental
 
 
 @experimental
-def list_elements_to_numeric(lst: list) -> list:
+def list_elements_to_numeric(lst: list[Any]) -> list[int | float]:
     """Convert to numeric values all the possible elements of a list.
 
     First try to convert to int, and then to float. Elements that cannot be converted

@@ -26,17 +26,16 @@ def get_caller_path() -> Path | None:
     # script that called this... which might be a NoneType
 
     try:
-        # Get the frame of this function's caller
-        caller_1 = currentframe().f_back
-        if not isinstance(caller_1, FrameType):
+        if (current_frame := currentframe()) is None:
             return None
-        # Get the caller's caller frame
-        caller_2 = caller_1.f_back
-        if not isinstance(caller_2, FrameType):
+        parent_frame = current_frame.f_back
+        if not isinstance(parent_frame, FrameType):
+            return None
+        grandparent_frame = parent_frame.f_back
+        if not isinstance(grandparent_frame, FrameType):
             return None
 
-        # Get the path of the script from the frame
-        return Path(getframeinfo(caller_2).filename)
+        return Path(getframeinfo(grandparent_frame).filename)
     except AttributeError:
         # Handle case where there is no caller or caller's caller
         return None

@@ -30,7 +30,7 @@ def _get_msg(
     return fmt.format(name=wrapped.__name__, reason=reason or "", version=version or "")
 
 
-def _warning_decorator(decorator_name: str) -> Callable[..., Any]:
+def _warning_decorator(decorator_name: str) -> Any:
     """Create decorators to emit warnings.
 
     This is a decorator factory used to create actual decorators such as 'experimental' and
@@ -40,12 +40,17 @@ def _warning_decorator(decorator_name: str) -> Callable[..., Any]:
     # REFERENCE: adapted from 'deprecated' of deprecated library
     # REFERENCE: see also how they handle the deprecated decorator in sklearn
 
-    def actual_decorator(*args, **kwargs):
-        category = kwargs.get("category", Warning)
+    def actual_decorator(*args: Any, **kwargs: Any) -> Any:
+        category: type[Warning] = kwargs.get("category", Warning)
         if len(args) == 1 and callable(args[0]):
 
             @wrapt.decorator
-            def wrapper_without_args(wrapped, instance, args_, kwargs_) -> Any:
+            def wrapper_without_args(
+                wrapped: Callable[..., Any],
+                instance: Any | None,
+                args_: tuple[Any, ...],
+                kwargs_: dict[str, Any],
+            ) -> Any:
                 msg = _get_msg(decorator_name, wrapped, None, None)
                 warnings.warn(msg, category=category, stacklevel=_routine_stacklevel)
                 return wrapped(*args_, **kwargs_)
@@ -53,7 +58,12 @@ def _warning_decorator(decorator_name: str) -> Callable[..., Any]:
             return wrapper_without_args(args[0])
 
         @wrapt.decorator
-        def wrapper_with_args(wrapped, instance, args_, kwargs_) -> Any:
+        def wrapper_with_args(
+            wrapped: Callable[..., Any],
+            instance: Any | None,
+            args_: tuple[Any, ...],
+            kwargs_: dict[str, Any],
+        ) -> Any:
             msg = _get_msg(decorator_name, wrapped, kwargs.get("reason"), kwargs.get("version"))
             if action := kwargs.get("action"):
                 with warnings.catch_warnings():
@@ -68,7 +78,7 @@ def _warning_decorator(decorator_name: str) -> Callable[..., Any]:
     return actual_decorator
 
 
-def experimental(*args, **kwargs) -> Callable[..., Any]:
+def experimental(*args: Any, **kwargs: Any) -> Any:
     """Mark functions or classes as experimental.
 
     Parameters
@@ -107,7 +117,7 @@ def experimental(*args, **kwargs) -> Callable[..., Any]:
     return _warning_decorator("experimental")(*args, **kwargs)
 
 
-def deprecated(*args, **kwargs):
+def deprecated(*args: Any, **kwargs: Any) -> Any:
     """
     Mark functions or classes as deprecated.
 
@@ -151,8 +161,8 @@ def deprecated_argument(
     argument: str = "",
     version: str = "",
     additional_msg: str = "",
-    category=DeprecationWarning,
-) -> Callable[..., Any]:
+    category: type[Warning] = DeprecationWarning,
+) -> Any:
     """Warn of a deprecated argument.
 
     Used by decorating the function or method in which the argument is being deprecated.
@@ -201,13 +211,22 @@ def deprecated_argument(
     """
 
     @wrapt.decorator
-    def wrapper(wrapped, instance, args, kwargs):
+    def wrapper(
+        wrapped: Callable[..., Any],
+        instance: Any | None,
+        args: tuple[Any, ...],
+        kwargs: dict[str, Any],
+    ) -> Any:
         if argument in kwargs:
-            module_name = inspect.getmodule(wrapped).__name__
-            if module_name == "__main__":
-                module_name = ""
+            module = inspect.getmodule(wrapped)
+            if module is not None:
+                module_name = module.__name__
+                if module_name == "__main__":
+                    module_name = ""
+                else:
+                    module_name += "."
             else:
-                module_name += "."
+                module_name = ""
             method = module_name + wrapped.__name__
             if instance is not None:
                 method = instance.__class__.__name__ + "." + method

@@ -1,11 +1,12 @@
 """Module providing the Timer class for measuring and logging execution times."""
+import contextlib
 import csv
 import io
 import logging
 import time
-import warnings
+from collections.abc import Callable
 from pathlib import Path
-from typing import ClassVar, Protocol, Self
+from typing import Any, ClassVar, Protocol, Self
 
 import wrapt
 
@@ -102,7 +103,7 @@ class Timer:
         else:
             self.time_func = time_func
 
-        self.logger = warnings.warn if logger is None else logger.warning
+        self.logger = logging.getLogger(__name__) if logger is None else logger
         self.where_output = None if logger is None else logger.info
         self.running = False
         self.reset()
@@ -112,22 +113,28 @@ class Timer:
         self.start()
         return self
 
-    def __exit__(self, *exc_info: object):
+    def __exit__(self, *exc_info: object) -> None:
         """Stop the context manager timer."""
         self.stop()
 
     @wrapt.decorator
-    def __call__(self, wrapped, instance, args, kwargs):
+    def __call__(
+        self,
+        wrapped: Callable[..., Any],
+        instance: Any | None,
+        args: tuple[Any, ...],
+        kwargs: dict[str, Any],
+    ) -> Any:
         """Measure the execution time of a decorated function or method."""
         self.start()
         result = wrapped(*args, **kwargs)
         self.stop()
         return result
 
-    def start(self):
+    def start(self) -> None:
         """Start the timer."""
-        if self.stop_time is not None:
-            self.logger("Timer has not been resetted.")
+        if hasattr(self, "stop_time"):
+            self.logger.warning("Timer has not been resetted.")
             return
         self.running = True
         self.add_timestamp("start")
@@ -138,8 +145,8 @@ class Timer:
 
         It also saves the timestamps to a file, when provided.
         """
-        if self.start_time is None:
-            self.logger("Timer has not been started.")
+        if not hasattr(self, "start_time"):
+            self.logger.warning("Timer has not been started.")
             return 0
 
         self.add_timestamp("stop")
@@ -154,7 +161,7 @@ class Timer:
 
         return ellapsed_time
 
-    def add_timestamp(self, text=""):
+    def add_timestamp(self, text: str = "") -> None:
         """Add a timestamp with an associated text.
 
         Parameters
@@ -163,12 +170,12 @@ class Timer:
             The text associated with the timestamp. By default "".
         """
         if not self.running:
-            self.logger("Timer is not running.")
+            self.logger.warning("Timer is not running.")
 
         self.timestamps.append(self.time_func())
         self.texts.append(text)
 
-    def save(self, filename: str | Path | None = None):
+    def save(self, filename: str | Path | None = None) -> None:
         """Save the timestamps and their associated texts to a file.
 
         Parameters
@@ -177,11 +184,11 @@ class Timer:
             The name or path of the file to save the timestamps to. If not provided,
             the filename attribute of the Timer object will be used. By default None.
         """
-        if self.start_time is None:
-            self.logger("Timer has not been started.")
+        if not hasattr(self, "start_time"):
+            self.logger.warning("Timer has not been started.")
             return
-        if self.stop_time is None:
-            self.logger("Timer has not been stopped yet.")
+        if not hasattr(self, "stop_time"):
+            self.logger.warning("Timer has not been stopped yet.")
             return
         if (filename := filename or self.filename) is None:
             return
@@ -191,12 +198,13 @@ class Timer:
         with Path.open(filename, "w", newline="") as csvfile:
             csvfile.write(self._to_csv())
 
-    def reset(self):
+    def reset(self) -> None:
         """Reset the timer."""
-        self.start_time = None
-        self.stop_time = None
-        self.timestamps = []
-        self.texts = []
+        with contextlib.suppress(AttributeError):
+            del self.start_time
+            del self.stop_time
+        self.timestamps: list[float] = []
+        self.texts: list[str] = []
 
     def get_data(self) -> list[list[str]]:
         """Get the timer data as a list of rows.
@@ -232,7 +240,7 @@ class Timer:
 
         return rows
 
-    def _to_csv(self):
+    def _to_csv(self) -> str:
         rows = self.get_data()
 
         # Convert rows to CSV string

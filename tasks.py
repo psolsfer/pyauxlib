@@ -31,7 +31,7 @@ def _delete_file(file: Path) -> None:
     file.unlink(missing_ok=True)
 
 
-def _run(c: Context, command) -> Result | None:
+def _run(c: Context, command: str) -> Result | None:
     return c.run(f"poetry run {command}", pty=platform.system() != "Windows")
 
 
@@ -42,22 +42,22 @@ def type_check(c: Context) -> None:
     _run(c, "mypy --junit-xml reports/mypy.xml .")
 
 
-@task(help={"check": "Only checks without making changes"})
-def lint_ruff(c: Context, check=True) -> None:
+@task(help={"check": "Only checks without making changes (bool)"})
+def lint_ruff(c: Context, check: bool = True) -> None:
     """Check style with Ruff."""
     check_str = "--no-fix" if check else ""
     _run(c, "ruff check {} {}".format(check_str, " ".join(PYTHON_DIRS)))
 
 
-@task(help={"check": "Only checks without making changes"})
-def format_ruff(c: Context, check=True) -> None:
+@task(help={"check": "Only checks without making changes (bool)"})
+def format_ruff(c: Context, check: bool = True) -> None:
     """Check style with Ruff Formatter."""
     check_str = "--check" if check else ""
     _run(c, "ruff format {} {}".format(check_str, " ".join(PYTHON_DIRS)))
 
 
-@task(help={"check": "Only checks, without making changes"})
-def lint(c: Context, check=True) -> None:
+@task(help={"check": "Only checks, without making changes (bool)"})
+def lint(c: Context, check: bool = True) -> None:
     """Run all linting/formatting."""
     lint_ruff(c, check)
     format_ruff(c, check)
@@ -66,8 +66,8 @@ def lint(c: Context, check=True) -> None:
 
 
 # Tests
-@task(help={"tox_env": "Environment name to run the test"})
-def test(c: Context, tox_env="py311") -> None:
+@task(help={"tox_env": "Environment name to run the test (str)"})
+def test(c: Context, tox_env: str = "py311") -> None:
     """Run tests with tox."""
     _run(c, f"tox -e {tox_env}")
 
@@ -84,8 +84,8 @@ def test_all(c: Context) -> None:
     _run(c, "tox")
 
 
-@task(help={"publish": "Publish the result via coveralls"})
-def coverage(c: Context, publish=False) -> None:
+@task(help={"publish": "Publish the result via coveralls (bool)"})
+def coverage(c: Context, publish: bool = False) -> None:
     """Run tests and generate a coverage report."""
     _run(c, f"coverage run --source {SOURCE_DIR} -m pytest")
     _run(c, "coverage report")
@@ -105,8 +105,8 @@ def safety(c: Context) -> None:
 
 
 # Documentation
-@task(help={"launch": "Launch documentation in the web browser"})
-def docs(c: Context, launch=True) -> None:
+@task(help={"launch": "Launch documentation in the web browser (bool)"})
+def docs(c: Context, launch: bool = True) -> None:
     """Generate documentation."""
     # Remove old documentation files
     clean_docs(c)
