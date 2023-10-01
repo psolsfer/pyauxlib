@@ -149,7 +149,7 @@ def iterate_folder(  # noqa: PLR0913
             )
 
 
-def create_folder(path: Path, includes_file=False):
+def create_folder(path: Path, includes_file: bool = False) -> None:
     """Create the folder passed in the 'path' if it doesn't exist.
 
     Useful to be sure that a folder exists before saving a file.

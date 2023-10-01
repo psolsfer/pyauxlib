@@ -35,6 +35,9 @@ wheels/
 .dmypy.json
 .mypy_cache/
 
+# Reports
+reports/
+
 # Data
 *.csv*
 *.dat*

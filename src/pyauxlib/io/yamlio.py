@@ -1,8 +1,8 @@
 """Yaml-related functions."""
 import logging
 import re
-from functools import partial
 from pathlib import Path
+from typing import Any
 
 import yaml
 from yaml.parser import ParserError
@@ -10,7 +10,7 @@ from yaml.parser import ParserError
 logger = logging.getLogger(__name__)
 
 
-def _loader_scientific_notation():
+def _loader_scientific_notation() -> type[yaml.FullLoader]:
     """Yaml loader with scientific notation.
 
     Returns a yaml loader that can parse numbers in scientific notation as numbers
@@ -20,7 +20,7 @@ def _loader_scientific_notation():
     # REFERENCE https://stackoverflow.com/a/30462009
     """
     loader = yaml.FullLoader
-    loader.add_implicit_resolver(
+    loader.add_implicit_resolver(  # type: ignore[no-untyped-call]
         "tag:yaml.org,2002:float",
         re.compile(
             """^(?:
@@ -37,10 +37,10 @@ def _loader_scientific_notation():
     return loader
 
 
-def load_yaml(file: Path, safe_load: bool = False) -> dict:
-    """Load a yaml file and returns it as a dictionary.
+def load_yaml(file: Path, safe_load: bool = False) -> Any:
+    """Load a yaml file and returns its contents.
 
-     R eturns an empty dictionary if the file is not found,.
+     Returns an empty dictionary if the file is not found.
 
     Parameters
     ----------
@@ -51,14 +51,19 @@ def load_yaml(file: Path, safe_load: bool = False) -> dict:
 
     Returns
     -------
-    dict
-        dictionary with the the yaml contents
+    Any
+        The contents of the yaml file.
     """
-    load = yaml.safe_load if safe_load else partial(yaml.load, Loader=_loader_scientific_notation())
-
     try:
         with Path.open(file) as f:
-            conf = load(f)
+            if safe_load:
+                conf = yaml.safe_load(f)
+            else:
+                logger.warning(
+                    "Probable use of unsafe `yaml.load` on file '%s'. Consider `yaml.safe_load` if the use of scientific notation is not necessary.",
+                    file,
+                )
+                conf = yaml.load(f, Loader=_loader_scientific_notation())  # noqa: S506
             if conf is None:
                 return {}
     except ParserError:

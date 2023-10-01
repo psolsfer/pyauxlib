@@ -2,6 +2,7 @@
 import inspect
 import logging
 from collections.abc import Callable
+from typing import Any
 
 from pyauxlib.decorators.warnings import experimental
 
@@ -9,7 +10,7 @@ logger = logging.getLogger(__name__)
 
 
 @experimental
-def call_with_arguments(*args: dict, callable_obj: Callable) -> Callable:
+def call_with_arguments(*argsdict: dict[Any, Any], callable_obj: Callable[..., Any]) -> Any:
     """Execute a callable object with provided arguments.
 
     This function checks if the required arguments of a callable object are included in the
@@ -17,7 +18,7 @@ def call_with_arguments(*args: dict, callable_obj: Callable) -> Callable:
 
     Parameters
     ----------
-    *args : dict
+    *argsdict : dict
         Variable number of dictionaries with arguments to be passed to the callable.
         In case of duplicate entries, the last values from last dictionaries overwrite
         those of the first ones.
@@ -26,7 +27,7 @@ def call_with_arguments(*args: dict, callable_obj: Callable) -> Callable:
 
     Returns
     -------
-    Callable
+    Any
         The callable object with the passed arguments.
 
     Raises
@@ -36,15 +37,17 @@ def call_with_arguments(*args: dict, callable_obj: Callable) -> Callable:
         provided object is not callable, or if the provided callable object does not
         accept either *args or **kwargs.
     """
-    if callable(callable_obj):
+    try:
         sig = inspect.signature(callable_obj)
         params = sig.parameters
-        callable_accepts_kwargs = sig.varkw is not None
-        callable_accepts_args = sig.varargs is not None
-    else:
+        varkw = [name for name, param in params.items() if param.kind == param.VAR_KEYWORD]
+        varargs = [name for name, param in params.items() if param.kind == param.VAR_POSITIONAL]
+        callable_accepts_kwargs = bool(varkw)
+        callable_accepts_args = bool(varargs)
+    except TypeError as err:
         error_msg = "The provided object is not callable."
-        logger.error(error_msg)
-        raise TypeError(error_msg)
+        logger.exception(error_msg)
+        raise TypeError(error_msg) from err
 
     if not callable_accepts_args and not callable_accepts_kwargs:
         error_msg = "The provided callable object does not accept *args or **kwargs."
@@ -55,10 +58,10 @@ def call_with_arguments(*args: dict, callable_obj: Callable) -> Callable:
 
     # Merge all the dictionaries in *args
     # Values from last dictionaries overwrite existing keys in the previous
-    arguments = {key: val for d in args for key, val in d.items()}
+    arguments = {key: val for d in argsdict for key, val in d.items()}
 
     extra_args = {k: v for (k, v) in arguments.items() if k not in params}
-    kwargs = {}
+    kwargs: dict[str, Any] = {}
 
     if extra_args:
         if callable_accepts_kwargs:  # Replace with actual check
@@ -91,7 +94,7 @@ def call_with_arguments(*args: dict, callable_obj: Callable) -> Callable:
     return callable_obj(*args)
 
 
-def _get_argskwargs(callable_obj: Callable) -> list[str | None]:
+def _get_argskwargs(callable_obj: Callable[..., Any]) -> list[str | None]:
     """Return a list with the args and kwargs of a callable.
 
     Parameters

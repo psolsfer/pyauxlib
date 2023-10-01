@@ -1,9 +1,11 @@
 """Experimental function to check for unknown kwargs."""
+from typing import Any
+
 from pyauxlib.decorators.warnings import experimental
 
 
 @experimental
-def unknown_kwargs(kwargs: dict, recognized_kwargs: list[str]):
+def unknown_kwargs(kwargs: dict[str, Any], recognized_kwargs: list[str]) -> None:
     """Check for unkown kwargs passed to a method/class.
 
     Parameters

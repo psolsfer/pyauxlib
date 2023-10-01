@@ -13,8 +13,10 @@ from pathlib import Path
 
 try:
     import chardet
+
+    HAVE_CHARDET = True
 except ImportError:
-    chardet = None
+    HAVE_CHARDET = False
 
 logger = logging.getLogger(__name__)
 
@@ -46,15 +48,14 @@ def detect_encoding(file: str | Path) -> str | None:
         with Path.open(file, "rb") as f:
             # Reads the first 5 bytes
             beginning = f.read(5)
-
             if beginning[0:2] in codecs:
-                encoding = codecs[beginning[0:2]]
+                encoding = codecs[beginning[0:2]]  # type: ignore[index]
             elif beginning[0:3] in codecs:
-                encoding = codecs[beginning[0:3]]
+                encoding = codecs[beginning[0:3]]  # type: ignore[index]
             elif beginning[0:4] in codecs:
-                encoding = codecs[beginning[0:4]]
+                encoding = codecs[beginning[0:4]]  # type: ignore[index]
             elif beginning[0:5] in codecs:
-                encoding = codecs[beginning[0:5]]
+                encoding = codecs[beginning[0:5]]  # type: ignore[index]
             else:
                 encoding = "utf-8"
             return encoding
@@ -95,6 +96,9 @@ def detect_encoding_chardet(file: str | Path) -> str | None:
     # Output: 'utf-8'
     ```
     """
+    if not HAVE_CHARDET:
+        logger.warning("Install package 'chardet' for additional encoding detection.")
+        return None
     file = Path(file) if isinstance(file, str) else file
     try:
         with Path.open(file, "rb") as f:
@@ -102,9 +106,6 @@ def detect_encoding_chardet(file: str | Path) -> str | None:
             result = chardet.detect(raw_data)
             encoding = result["encoding"]
             return encoding
-    except AttributeError:
-        logger.warning("Install package 'chardet' for additional encoding detection.")
-        return None
     except FileNotFoundError:
         logger.warning("Error %s loading file", file)
         return None
