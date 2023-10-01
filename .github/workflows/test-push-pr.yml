@@ -14,7 +14,7 @@ jobs:
       matrix:
         os: [ubuntu-latest, windows-latest]
         python-version: ['3.10', '3.11']
-        tox-env: ['check', 'docs', 'ruff', 'py310', 'py311']
+        tox-env: ['check', 'docs', 'lint', 'py310', 'py311']
 
     steps:
     - uses: actions/checkout@v3
