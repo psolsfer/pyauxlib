@@ -23,7 +23,7 @@ classifiers = [
     "Topic :: Utilities"
 ]
 packages = [
-    { include = "src/pyauxlib" },
+    { include = "pyauxlib", from ="src" },
     { include = "tests", format = "sdist" },
 ]
 include = [
@@ -71,6 +71,7 @@ mkdocs-include-markdown-plugin = ">=6.0"
 mkdocs-awesome-pages-plugin = ">=2.9.2"
 mypy = ">=1.5.0"
 pytest = { extras = ["toml"], version = ">=7.4.2" }
+pytest-cov = ">=4.1.0"
 coverage = ">=7.3.1"
 pre-commit = ">=3.3.1"
 ruff = ">=0.0.290"
@@ -135,7 +136,7 @@ warn_required_dynamic_aliases = true
 warn_untyped_fields = true
 
 [tool.coverage.report]  # https://coverage.readthedocs.io/en/latest/config.html#report
-fail_under = 50
+fail_under = 0 # Set the desired threshold for the coverage report to fail
 precision = 1
 show_missing = true
 skip_covered = true

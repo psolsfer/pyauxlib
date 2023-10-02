@@ -51,12 +51,13 @@ markdown_extensions:
     - pymdownx.blocks.details
     # - pymdownx.blocks.tab
 
-    - toc:
+    - markdown.extensions.toc:
           baselevel: 2
           permalink: true
-          slugify: !!python/object/apply:pymdownx.slugs.slugify
-              kwds:
-                  case: lower
+        #   slugify: !!python/object/apply:pymdownx.slugs.slugify {kwds: {case: lower}}
+
+
+
 plugins:
     - include-markdown
     - mkdocstrings

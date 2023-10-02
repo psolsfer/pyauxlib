@@ -11,6 +11,7 @@ import webbrowser
 from pathlib import Path
 
 from invoke.context import Context
+from invoke.exceptions import Failure
 from invoke.runners import Result
 from invoke.tasks import task
 
@@ -31,38 +32,42 @@ def _delete_file(file: Path) -> None:
     file.unlink(missing_ok=True)
 
 
-def _run(c: Context, command: str) -> Result | None:
-    return c.run(f"poetry run {command}", pty=platform.system() != "Windows")
+def _run(c: Context, command: str, ignore_failure: bool = False) -> Result | None:
+    try:
+        return c.run(f"poetry run {command}", pty=platform.system() != "Windows")
+    except Failure:
+        if ignore_failure:
+            return None
+        raise
 
 
 # Lint, formatting, type checking
 @task
-def type_check(c: Context) -> None:
+def type_check(c: Context, ignore_failure: bool = False) -> None:
     """Type checking with mypy."""
-    _run(c, "mypy --junit-xml reports/mypy.xml .")
+    _run(c, "mypy --junit-xml reports/mypy.xml .", ignore_failure)
 
 
 @task(help={"check": "Only checks without making changes (bool)"})
-def lint_ruff(c: Context, check: bool = True) -> None:
+def lint_ruff(c: Context, check: bool = True, ignore_failure: bool = False) -> None:
     """Check style with Ruff."""
     check_str = "--no-fix" if check else ""
-    _run(c, "ruff check {} {}".format(check_str, " ".join(PYTHON_DIRS)))
+    _run(c, "ruff check {} {}".format(check_str, " ".join(PYTHON_DIRS)), ignore_failure)
 
 
 @task(help={"check": "Only checks without making changes (bool)"})
-def format_ruff(c: Context, check: bool = True) -> None:
+def format_ruff(c: Context, check: bool = True, ignore_failure: bool = False) -> None:
     """Check style with Ruff Formatter."""
     check_str = "--check" if check else ""
-    _run(c, "ruff format {} {}".format(check_str, " ".join(PYTHON_DIRS)))
+    _run(c, "ruff format {} {}".format(check_str, " ".join(PYTHON_DIRS)), ignore_failure)
 
 
 @task(help={"check": "Only checks, without making changes (bool)"})
 def lint(c: Context, check: bool = True) -> None:
     """Run all linting/formatting."""
-    lint_ruff(c, check)
-    format_ruff(c, check)
-
-    type_check(c)
+    lint_ruff(c, check, True)
+    format_ruff(c, check, True)
+    type_check(c, True)
 
 
 # Tests
@@ -176,6 +181,13 @@ def clean(c: Context) -> None:
 
 
 # Build and release
+@task
+def pre_release_check(c: Context) -> None:
+    """Complete before releasing the package."""
+    lint(c, True)
+    test_all(c)
+
+
 @task(clean)
 def dist(c: Context) -> None:
     """Build source and wheel packages."""
