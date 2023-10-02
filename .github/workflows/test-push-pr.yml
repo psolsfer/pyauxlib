@@ -14,7 +14,6 @@ jobs:
       matrix:
         os: [ubuntu-latest, windows-latest]
         python-version: ['3.10', '3.11']
-        tox-env: ['check', 'docs', 'lint', 'py310', 'py311']
 
     steps:
     - uses: actions/checkout@v4
@@ -32,7 +31,8 @@ jobs:
         poetry install
     - name: Test with tox
     #   run: poetry run invoke test --tox-env ${{ matrix.tox-env }}
-      run: poetry run tox -e ${{ matrix.tox-env }}
+      run: poetry run tox
+
 
 #   finish:
 #     needs: test
