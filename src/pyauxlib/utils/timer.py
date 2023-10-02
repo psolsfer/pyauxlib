@@ -6,9 +6,15 @@ import logging
 import time
 from collections.abc import Callable
 from pathlib import Path
-from typing import Any, ClassVar, Protocol, Self
 
 import wrapt
+
+try:
+    from typing import Any, ClassVar, Protocol, Self  # Only works from Python 3.11
+except ImportError:
+    from typing import Any, ClassVar, Protocol
+
+    from typing_extensions import Self
 
 
 class TimeFunc(Protocol):
