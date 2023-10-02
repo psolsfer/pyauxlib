@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "pyauxlib"
-version = "0.1.0"
+version = "0.1.1"
 description = "Python library designed to provide auxiliary functionalities that can enhance your Python project."
 authors = ["Pablo Solís-Fernández <psolsfer@gmail.com>"]
 readme = "README.md"
@@ -110,7 +110,7 @@ mkdocs-awesome-pages-plugin = ">=2.9.2"
 bump_message = "bump(release): v$current_version → v$new_version"
 tag_format = "v$version"
 update_changelog_on_bump = true
-version = "0.1.0"
+version = "0.1.1"
 version_files = [
     "pyproject.toml:version",
     #"docs/conf.py:version",
