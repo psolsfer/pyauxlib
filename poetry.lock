@@ -1962,4 +1962,4 @@ chardet = ["chardet"]
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.10,<3.13"
-content-hash = "79ac8cda61928ded9ebfed010e1b9671a1cf350ba1d20f09ee0c8b62c565f0cb"
+content-hash = "203b24d4361c703aabdfc8b2a60aa8c5ed6dc0ecb5c6f2514ab07cf6006453c1"

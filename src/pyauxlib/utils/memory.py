@@ -1,7 +1,11 @@
 """Basic memory tracker."""
 import tracemalloc
 from tracemalloc import Snapshot, StatisticDiff
-from typing import Self
+
+try:
+    from typing import Self  # Only works from Python 3.11
+except ImportError:
+    from typing_extensions import Self
 
 
 class MemoryTracker:
