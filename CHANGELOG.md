@@ -1,3 +1,9 @@
+## v0.1.1 (2023-10-02)
+
+### Fix
+
+- **whole-project**: fix workflows, tests and mkdocs conf
+
 ## v0.1.0 (2023-09-30)
 
 ### Refactor
