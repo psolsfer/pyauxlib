@@ -1,10 +1,10 @@
 {
   "template": "https://github.com/psolsfer/cookiecutter-pypackage-poet",
-  "commit": "7d5ed3ef82b9a2888b458ab28162ba988fd848cc",
+  "commit": "5429e590a5b91275c99612d92565636d2ce7e48d",
   "checkout": null,
   "context": {
     "cookiecutter": {
-      "full_name": "Pablo Solís-Fernández",
+      "full_name": "Pablo Solï¿½s-Fernï¿½ndez",
       "email": "psolsfer@gmail.com",
       "github_username": "psolsfer",
       "project_name": "PyAuxLib",

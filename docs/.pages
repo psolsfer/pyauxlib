@@ -1,11 +1,13 @@
 # Page configuration for 'mkdocs-awesome-pages-plugin'
 nav:
-        - Home:
-                - Readme: readme.md
-                - Index: index.md
-        - installation: installation.md
-        - usage: usage.md
-        - modules: modules.md
-        - contributing: contributing.md
-        - authors: authors.md
-        - history: history.md
+    - Home:
+          - About: index.md
+          - Getting started:
+                - Installation: installation.md
+                - Usage: usage.md
+          - Modules: modules.md
+    - FAQ: faq.md
+    - Troubleshooting: troubleshooting.md
+    - Contributing: contributing.md
+    - Authors: authors.md
+    - History: history.md
