@@ -1,6 +1,6 @@
 {
   "template": "https://github.com/psolsfer/cookiecutter-pypackage-poet",
-  "commit": "5429e590a5b91275c99612d92565636d2ce7e48d",
+  "commit": "fd15c002f46f73b89b62a36d75d6c377b7273fcf",
   "checkout": null,
   "context": {
     "cookiecutter": {
