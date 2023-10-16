@@ -1,3 +1,9 @@
+## v0.1.2 (2023-10-16)
+
+### Feat
+
+- **pyauxlib.decorators.import_errors**: add decorator to check that required imports are available
+
 ## v0.1.1 (2023-10-02)
 
 ### Fix
