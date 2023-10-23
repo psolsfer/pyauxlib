@@ -31,7 +31,6 @@ PYTHON_DIRS = [str(d) for d in [SOURCE_DIR, TEST_DIR]]
 def _delete_file(file: Path) -> None:
     file.unlink(missing_ok=True)
 
-
 def _run(c: Context, command: str, ignore_failure: bool = False) -> Result | None:
     try:
         return c.run(f"poetry run {command}", pty=platform.system() != "Windows")
@@ -62,7 +61,7 @@ def format_ruff(c: Context, check: bool = True, ignore_failure: bool = False) ->
     _run(c, "ruff format {} {}".format(check_str, " ".join(PYTHON_DIRS)), ignore_failure)
 
 
-@task(help={"check": "Only checks, without making changes (bool)"})
+@task(help={"check": "Only checks, without making changes"})
 def lint(c: Context, check: bool = True) -> None:
     """Run all linting/formatting."""
     lint_ruff(c, check, True)
@@ -71,7 +70,7 @@ def lint(c: Context, check: bool = True) -> None:
 
 
 # Tests
-@task(help={"tox_env": "Environment name to run the test (str)"})
+@task(help={"tox_env": "Environment name to run the test"})
 def test(c: Context, tox_env: str = "py311") -> None:
     """Run tests with tox."""
     _run(c, f"tox -e {tox_env}")
@@ -89,7 +88,7 @@ def test_all(c: Context) -> None:
     _run(c, "tox")
 
 
-@task(help={"publish": "Publish the result via coveralls (bool)"})
+@task(help={"publish": "Publish the result via coveralls"})
 def coverage(c: Context, publish: bool = False) -> None:
     """Run tests and generate a coverage report."""
     _run(c, f"coverage run --source {SOURCE_DIR} -m pytest")
@@ -110,7 +109,7 @@ def safety(c: Context) -> None:
 
 
 # Documentation
-@task(help={"launch": "Launch documentation in the web browser (bool)"})
+@task(help={"launch": "Launch documentation in the web browser"})
 def docs(c: Context, launch: bool = True) -> None:
     """Generate documentation."""
     # Remove old documentation files
@@ -140,7 +139,7 @@ def clean_build(c: Context) -> None:
     for dirpath in ["build", "dist", ".eggs"]:
         shutil.rmtree(dirpath, ignore_errors=True)
     for pattern in ["*.egg-info", "*.egg"]:
-        for filename in Path().glob("**/" + pattern):
+        for filename in Path().glob('**/' + pattern):
             if filename.is_dir():
                 shutil.rmtree(filename, ignore_errors=True)
             else:
@@ -151,7 +150,7 @@ def clean_build(c: Context) -> None:
 def clean_python(c: Context) -> None:
     """Clean up python file artifacts."""
     for pattern in ["*.pyc", "*.pyo", "*~", "__pycache__"]:
-        for filename in Path().glob("**/" + pattern):
+        for filename in Path().glob('**/' + pattern):
             try:
                 if filename.is_file():
                     filename.unlink(missing_ok=True)
@@ -222,10 +221,8 @@ def install(c: Context) -> None:
 @task
 def install_poetry(c: Context) -> None:
     """Download and install Poetry."""
-    if os.name == "nt":  # Windows
-        c.run(
-            "(Invoke-WebRequest -Uri https://install.python-poetry.org -UseBasicParsing).Content | py -"
-        )
+    if os.name == 'nt':  # Windows
+        c.run("(Invoke-WebRequest -Uri https://install.python-poetry.org -UseBasicParsing).Content | py -")
     else:  # Unix/Linux/MacOS
         c.run("curl -sSL https://install.python-poetry.org | python3 -")
 
@@ -233,11 +230,7 @@ def install_poetry(c: Context) -> None:
 @task
 def remove_poetry(c: Context) -> None:
     """Uninstall Poetry."""
-    if os.name == "nt":  # Windows
-        c.run(
-            "(Invoke-WebRequest -Uri https://raw.githubusercontent.com/python-poetry/poetry/master/install-poetry.py -UseBasicParsing).Content | py - --uninstall"
-        )
+    if os.name == 'nt':  # Windows
+        c.run("(Invoke-WebRequest -Uri https://raw.githubusercontent.com/python-poetry/poetry/master/install-poetry.py -UseBasicParsing).Content | py - --uninstall")
     else:  # Unix/Linux/MacOS
-        c.run(
-            "curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/install-poetry.py | python3 - --uninstall"
-        )
+        c.run("curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/install-poetry.py | python3 - --uninstall")

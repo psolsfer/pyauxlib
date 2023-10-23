@@ -1,5 +1,7 @@
 # History
 
+----
+
 ## 0.1.1 (2023/10/02)
 
 - Fixing the workflows, tests and mkdocs configuration
