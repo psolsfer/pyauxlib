@@ -1,3 +1,9 @@
+## v0.2.0 (2023-10-23)
+
+### Feat
+
+- **logger.py**: save log file in given path with a timestamp
+
 ## v0.1.2 (2023-10-16)
 
 ### Feat
