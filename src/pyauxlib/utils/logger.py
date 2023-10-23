@@ -1,7 +1,10 @@
 """Logging functions."""
 import logging
 import logging.handlers
+from datetime import datetime, timezone
 from pathlib import Path
+
+from pyauxlib.io.filesfolders import create_folder
 
 
 def _set_level(level: int | str | None, default_level: int | str = "INFO") -> int:
@@ -56,7 +59,7 @@ def init_logger(  # noqa: PLR0913
     level: int | str = "INFO",
     level_console: int | str | None = None,
     level_file: int | str | None = None,
-    output_file: Path | None = None,
+    output_folder: Path | None = None,
     file_size: int = 0,
     propagate: bool = False,
     output_console: bool = True,
@@ -77,8 +80,8 @@ def init_logger(  # noqa: PLR0913
         level of the console logger, by default None
     level_file : int | str | None, optional
         level of the file logger, by default None
-    output_file : Path, optional
-        file to output the log, by default None
+    output_folder : Path, optional
+        folder to output the log, by default None
     file_size : int, optional
         maximum size of the output file in bytes, by default 0 (=unlimited size)
     propagate : bool, optional
@@ -104,9 +107,14 @@ def init_logger(  # noqa: PLR0913
     formatter = logging.Formatter(output_format)
 
     handler_list: list[logging.Handler] = []
-    if output_file:
+    if output_folder is not None:
+        # Timestamp for the log file name
+        create_folder(output_folder, includes_file=False)
+        timestamp = datetime.now(tz=timezone.utc).astimezone().strftime("%Y%m%d_%H%M%S")
+        output_file_with_timestamp = output_folder / f"{timestamp}.log"
+
         file_handler = logging.handlers.RotatingFileHandler(
-            filename=output_file, maxBytes=file_size, backupCount=5
+            filename=output_file_with_timestamp, maxBytes=file_size, backupCount=5
         )
         file_handler.setLevel(level_file)
         file_handler.setFormatter(formatter)
