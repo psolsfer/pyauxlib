@@ -1,10 +1,12 @@
 # Installation
 
+----
+
 ## Stable release
 
 To install PyAuxLib, run this command in your terminal:
 
-=== "Poetry (recommended)"
+=== ":simple-poetry: Poetry (recommended)"
 
     ```bash linenums="0"
     poetry add pyauxlib
@@ -38,7 +40,7 @@ You can either clone the public repository or download the [tarball].
 === "Tarball"
 
     ```bash linenums="0"
-    curl -OJL https://github.com/psolsfer/pyauxlib/tarball/master
+    curl -OJL https://github.com/psolsfer/pyauxlib/tarball/main
     ```
 
 Once you have a copy of the source, you can install it with:
@@ -51,4 +53,4 @@ poetry install
 This command installs all dependencies as specified in `pyproject.toml` and also creates a virtual environment if one doesn't exist.
 
 [Github repo]: <https://github.com/psolsfer/pyauxlib>
-[tarball]: <https://github.com/psolsfer/pyauxlib/tarball/master/>
+[tarball]: <https://github.com/psolsfer/pyauxlib/tarball/main/>

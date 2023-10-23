@@ -1,5 +1,7 @@
 # Credits
 
+----
+
 ## Developments Lead
 
 - Pablo Solís-Fernández <psolsfer@gmail.com>

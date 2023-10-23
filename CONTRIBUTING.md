@@ -1,5 +1,7 @@
 # Contributing
 
+----
+
 Contributions are welcome, and they are greatly appreciated! Every little bit
 helps, and credit will always be given.
 
@@ -120,7 +122,6 @@ To run a subset of tests:
 ```bash linenums="0"
 pytest tests.test_pyauxlib
 ```
-
 ### Deploying
 
 A reminder for the maintainers on how to deploy.
@@ -190,13 +191,13 @@ A reminder for the maintainers on how to deploy.
 
     Run the tests Before pushing your changes to ensure that your package is working as expected:
 
-    === "Invoke"
+    === ":octicons-zap-24: Invoke"
 
         ```bash linenums="0"
         invoke test-all
         ```
 
-    === "Poetry"
+    === ":simple-poetry: Poetry"
 
         ```bash linenums="0"
         poetry run tox
