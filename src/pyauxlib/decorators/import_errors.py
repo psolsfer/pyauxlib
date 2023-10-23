@@ -20,7 +20,8 @@ def packages_required(package_names: list[str]) -> Any:
     Returns
     -------
     Callable[..., Any]
-        The decorated function, which will raise an ImportError if the required packages are not installed.
+        The decorated function, which will raise an ImportError if the required packages are not
+        installed.
     """
 
     @wrapt.decorator
