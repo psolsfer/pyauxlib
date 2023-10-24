@@ -170,3 +170,6 @@ max-doc-length = 100
 
 [tool.ruff.pydocstyle]
 convention = "numpy"
+
+[tool.ruff.format]
+line-ending = "auto"
