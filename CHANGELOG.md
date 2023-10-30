@@ -1,3 +1,9 @@
+## v0.3.0 (2023-10-30)
+
+### Feat
+
+- improve usage of timer
+
 ## v0.2.0 (2023-10-23)
 
 ### Feat
