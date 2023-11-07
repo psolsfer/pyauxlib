@@ -13,10 +13,8 @@ from pathlib import Path
 
 try:
     import chardet
-
-    HAVE_CHARDET = True
 except ImportError:
-    HAVE_CHARDET = False
+    chardet = None
 
 logger = logging.getLogger(__name__)
 
@@ -96,16 +94,17 @@ def detect_encoding_chardet(file: str | Path) -> str | None:
     # Output: 'utf-8'
     ```
     """
-    if not HAVE_CHARDET:
+    if chardet is None:
         logger.warning("Install package 'chardet' for additional encoding detection.")
         return None
     file = Path(file) if isinstance(file, str) else file
     try:
         with Path.open(file, "rb") as f:
             raw_data = f.read()
-            result = chardet.detect(raw_data)
-            encoding = result["encoding"]
-            return encoding
     except FileNotFoundError:
         logger.warning("Error %s loading file", file)
         return None
+
+    result = chardet.detect(raw_data)
+    encoding = result["encoding"]
+    return encoding
