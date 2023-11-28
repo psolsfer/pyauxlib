@@ -36,12 +36,12 @@ def timer(
     Here's how you can use this decorator:
 
     ```python
-    @timer_decorator()
+    @timer()
     def some_function():
         # function code
 
     # Or with arguments
-    @timer_decorator(filename='timer.txt')
+    @timer(filename='timer.txt')
     def some_function():
         # function code
     ```
