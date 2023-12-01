@@ -14,7 +14,7 @@ from pathlib import Path
 try:
     import chardet
 except ImportError:
-    chardet = None  # type: ignore[RuffPGH003]
+    chardet = None  # type: ignore[assignment]
 
 logger = logging.getLogger(__name__)
 
@@ -95,7 +95,7 @@ def detect_encoding_chardet(file: str | Path) -> str | None:
     ```
     """
     if chardet is None:
-        logger.warning("Install package 'chardet' for additional encoding detection.")
+        logger.warning("Install package 'chardet' for additional encoding detection.")  # type: ignore[unreachable]
         return None
     file = Path(file) if isinstance(file, str) else file
     try:
