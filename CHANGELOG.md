@@ -1,3 +1,13 @@
+## v0.4.0 (2023-12-01)
+
+### Feat
+
+- **decorators/log.py**: add decorator to log messages at the start/end execution of functions
+
+### Refactor
+
+- **encoding.py**: take out code from try-except
+
 ## v0.3.0 (2023-10-30)
 
 ### Feat
