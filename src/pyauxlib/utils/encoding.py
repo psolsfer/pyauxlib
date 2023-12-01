@@ -14,7 +14,7 @@ from pathlib import Path
 try:
     import chardet
 except ImportError:
-    chardet = None
+    chardet = None  # type: ignore[RuffPGH003]
 
 logger = logging.getLogger(__name__)
 
