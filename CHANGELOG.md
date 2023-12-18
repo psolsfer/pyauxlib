@@ -1,3 +1,10 @@
+## v0.5.0 (2023-12-18)
+
+### Feat
+
+- **utils.inspect_callables**: add public_callables function
+- **utils.uuid**: create unique uuid objects
+
 ## v0.4.1 (2023-12-01)
 
 ### Fix

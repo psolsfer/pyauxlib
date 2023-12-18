@@ -26,5 +26,7 @@ def public_callables(obj: object) -> list[str]:
     list[str]
         List of public attribute names.
     """
-    public_attrs = [method for method in dir(obj) if not method.startswith("_")]
-    return [method for method in public_attrs if inspect.ismethod(getattr(obj, method))]
+    attrs = dir(obj)
+    return [
+        method for method in attrs if not method.startswith("_") and callable(getattr(obj, method))
+    ]
