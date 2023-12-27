@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "pyauxlib"
-version = "0.6.0"
+version = "0.6.1"
 description = "Python library designed to provide auxiliary functionalities that can enhance your Python project."
 authors = ["Pablo Solís-Fernández <psolsfer@gmail.com>"]
 readme = "README.md"
@@ -47,7 +47,7 @@ build-backend = "poetry.core.masonry.api"
 bump_message = "bump(release): v$current_version → v$new_version"
 tag_format = "v$version"
 update_changelog_on_bump = true
-version = "0.6.0"
+version = "0.6.1"
 version_files = [
     "pyproject.toml:version",
     "src/pyauxlib/__init__.py:__version__"
