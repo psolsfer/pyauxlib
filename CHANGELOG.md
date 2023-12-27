@@ -1,3 +1,9 @@
+## v0.6.0 (2023-12-27)
+
+### Feat
+
+- **utils.zip**: add handling of zip files
+
 ## v0.5.0 (2023-12-18)
 
 ### Feat
