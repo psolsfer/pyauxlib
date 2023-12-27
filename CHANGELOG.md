@@ -1,3 +1,9 @@
+## v0.6.1 (2023-12-27)
+
+### Feat
+
+- **io.filesfolders**: add 'generate_unique_filename'
+
 ## v0.6.0 (2023-12-27)
 
 ### Feat
