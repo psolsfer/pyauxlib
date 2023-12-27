@@ -194,6 +194,36 @@ def clean_filename(filename: str, replacement: str = "_") -> str:
     return filename
 
 
+def generate_unique_filename(file: Path | str) -> Path:
+    """Generate a unique filename by appending numbers if a file with the same name exists.
+
+    Parameters
+    ----------
+    file : Union[str, Path]
+        The original file path.
+
+    Returns
+    -------
+    Path
+        The unique file path.
+
+    Examples
+    --------
+    >>> print(get_unique_filename("/path/to/file.txt")) # doctest: +SKIP
+    /path/to/file_2.txt
+    """
+    counter = 1
+    file = Path(file)
+
+    while True:
+        new_filename = f"{file.stem}{f'_{counter}' if counter > 1 else ''}{file.suffix}"
+        file_path = Path(file.parent / new_filename)
+        if not file_path.exists():
+            break
+        counter += 1
+    return file_path
+
+
 def add_folder_timestamp(rootdir: str | Path, fmt: str = "run_%Y_%m_%d-%H_%M_%S") -> Path:
     """Create a new folder with a timestamp in the given directory.
 
