@@ -1,5 +1,6 @@
 """Decorators for warning messages."""
 
+
 import inspect
 import warnings
 from collections.abc import Callable
@@ -16,18 +17,19 @@ def _get_msg(
     decorator_name: str,
     wrapped: Callable[..., Any],
     reason: str | None = None,
-    version: str | None = None,
+    since: str | None = None,
+    removed: str | None = None,
+    additional_msg: str | None = None,
 ) -> str:
     """Add messages to the decorators."""
-    if inspect.isclass(wrapped):
-        fmt = f"Call to {decorator_name} class {{name}}."
-    else:
-        fmt = f"Call to {decorator_name} function {{name}}."
-    if reason:
-        fmt += " ({reason})"
-    if version:
-        fmt += f" -- {decorator_name.capitalize()} since version {{version}}."
-    return fmt.format(name=wrapped.__name__, reason=reason or "", version=version or "")
+    kind = "Class" if inspect.isclass(wrapped) else "Function"
+    name = wrapped.__name__
+    since = f"since version {since}" if since else ""
+    reason = f": {reason}. " if reason else ". "
+    removed = f"Will be removed from version {removed}. " if removed else ""
+    additional_msg = f"{additional_msg}." or ""
+
+    return f"{kind} '{name}' deprecated {since}{reason}{removed}{additional_msg}"
 
 
 def _warning_decorator(decorator_name: str) -> Any:
@@ -64,7 +66,14 @@ def _warning_decorator(decorator_name: str) -> Any:
             args_: tuple[Any, ...],
             kwargs_: dict[str, Any],
         ) -> Any:
-            msg = _get_msg(decorator_name, wrapped, kwargs.get("reason"), kwargs.get("version"))
+            msg = _get_msg(
+                decorator_name,
+                wrapped,
+                kwargs.get("reason"),
+                kwargs.get("since"),
+                kwargs.get("removed"),
+                kwargs.get("additional_msg"),
+            )
             if action := kwargs.get("action"):
                 with warnings.catch_warnings():
                     warnings.simplefilter(action)
@@ -85,8 +94,10 @@ def experimental(*args: Any, **kwargs: Any) -> Any:
     ----------
     reason : str, optional
         The reason why the function or class is marked as experimental.
-    version : str, optional
+    since : str, optional
         The version since when the function or class is marked as experimental.
+    additional_msg : str, optional
+        Additional message to be included in the warning, e.g., "Use with caution".
     category : Type[Warning], optional
         The category of the warning to be issued. By default, `FutureWarning`.
     action : {None, "error", "ignore", "always", "default", "module", "once"}
@@ -106,7 +117,7 @@ def experimental(*args: Any, **kwargs: Any) -> Any:
         return [a, b]
 
     @experimental(reason="use another function",
-        version="1.2.0",
+        since="1.2.0",
         category=FutureWarning,
         action="error")
     def function(a, b):
@@ -125,8 +136,12 @@ def deprecated(*args: Any, **kwargs: Any) -> Any:
     ----------
     reason : str, optional
         The reason why the function or class is marked as deprecated.
-    version : str, optional
+    since : str, optional
         The version since when the function or class is marked as deprecated.
+    removed : str, optional
+        The version in which will be removed.
+    additional_msg : str, optional
+        Additional message to be included in the warning, e.g., "Use 'other_arg' instead".
     category : Type[Warning], optional
         The category of the warning to be issued. By default, `DeprecationWarning`.
     action : {None, "error", "ignore", "always", "default", "module", "once"}
@@ -145,8 +160,9 @@ def deprecated(*args: Any, **kwargs: Any) -> Any:
     def function(a, b):
         return [a, b]
 
-    @deprecated(reason="use another function",
-        version="1.2.0",
+    @deprecated(reason="changed name",
+        since="1.2.0",
+        what_do="Use 'new' instead"
         category=DeprecationWarning,
         action="error")
     def function(a, b):
@@ -159,7 +175,7 @@ def deprecated(*args: Any, **kwargs: Any) -> Any:
 
 def deprecated_argument(
     argument: str = "",
-    version: str = "",
+    since: str = "",
     additional_msg: str = "",
     category: type[Warning] = DeprecationWarning,
 ) -> Any:
@@ -171,7 +187,7 @@ def deprecated_argument(
     ----------
     argument : str, optional
         The name of the deprecated argument.
-    version : str, optional
+    since : str, optional
         The version in which the argument will be removed.
     additional_msg : str, optional
         Additional message to be included in the warning, e.g., "Use 'other_arg' instead".
@@ -189,7 +205,7 @@ def deprecated_argument(
     ```python
     @deprecated_argument(
         arguments=["my_arg1"],
-        version="2.0",
+        since="2.0",
         additional_msg="Use 'other_arg' instead")
     def my_func(my_arg1=None, my_arg2=None, other_arg=None):
         pass
@@ -199,11 +215,11 @@ def deprecated_argument(
     ```python
     @deprecated_argument(
         arguments=["my_arg1"],
-        version="2.0",
+        since="2.0",
         additional_msg="Use 'other_arg' instead")
     @deprecated_argument(
         arguments=["my_arg2"],
-        version="3.0",
+        since="3.0",
         additional_msg="Use 'yet_another_arg' instead")
     def my_func(my_arg1=None, my_arg2=None, other_arg=None):
         pass
@@ -230,7 +246,7 @@ def deprecated_argument(
             method = module_name + wrapped.__name__
             if instance is not None:
                 method = instance.__class__.__name__ + "." + method
-            version_str = f" in version {version}" if version else ""
+            version_str = f" in version {since}" if since else ""
             additional_msg_str = f" {additional_msg}." if additional_msg else ""
             msg = f"Argument '{argument}' from '{method}' is being deprecated{version_str}.{additional_msg_str}"
             warnings.warn(msg, category=category, stacklevel=_routine_stacklevel)

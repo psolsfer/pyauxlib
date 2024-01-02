@@ -54,12 +54,12 @@ version_files = [
     ]
 
 [tool.poetry.dependencies] # https://python-poetry.org/docs/dependency-specification/
-chardet = { version = "^5.2.0", optional = true }
+chardet = { version = "^5", optional = true }
 python = ">=3.10,<3.13"
 pydantic = ">=2.4.0"
 pyyaml = ">=5.1"
 types-PyYAML = ">=6.0.12"
-wrapt = "^1.15"
+wrapt = ">=1.15"
 
 [tool.poetry.extras] # https://python-poetry.org/docs/pyproject/#extras
 chardet = ["chardet"]

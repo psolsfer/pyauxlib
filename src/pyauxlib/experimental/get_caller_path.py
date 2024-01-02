@@ -3,7 +3,7 @@ from inspect import currentframe, getframeinfo
 from pathlib import Path
 from types import FrameType
 
-from pyauxlib.decorators.warnings import experimental
+from pyauxlib.decorators.warning import experimental
 
 
 @experimental
