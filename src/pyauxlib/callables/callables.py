@@ -4,7 +4,7 @@ import logging
 from collections.abc import Callable
 from typing import Any
 
-from pyauxlib.decorators.warnings import experimental
+from pyauxlib.decorators.warning import experimental
 
 logger = logging.getLogger(__name__)
 

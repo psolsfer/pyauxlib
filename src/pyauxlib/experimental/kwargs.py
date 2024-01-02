@@ -1,7 +1,7 @@
 """Experimental function to check for unknown kwargs."""
 from typing import Any
 
-from pyauxlib.decorators.warnings import experimental
+from pyauxlib.decorators.warning import experimental
 
 
 @experimental
