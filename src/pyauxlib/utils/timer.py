@@ -113,10 +113,10 @@ class Timer:
         # function code
 
     # Decorator usage with 'timer' helper function
-    from pyauxlib.decorators.timer import timer
-     @timer(filename='timer.txt')
-     def some_function():
-         # function code
+    >>> from pyauxlib.decorators.timer import timer
+    >>> @timer(filename='timer.txt')
+    >>> def some_function():
+    >>>    # function code
 
     ```
     """

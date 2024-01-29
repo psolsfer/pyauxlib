@@ -57,8 +57,7 @@ version_files = [
 chardet = { version = "^5", optional = true }
 python = ">=3.10,<3.13"
 pydantic = ">=2.4.0"
-pyyaml = ">=5.1"
-types-PyYAML = ">=6.0.12"
+ruamel-yaml = "^0"
 wrapt = ">=1.15"
 
 [tool.poetry.extras] # https://python-poetry.org/docs/pyproject/#extras
@@ -82,7 +81,7 @@ pytest = { extras = ["toml"], version = ">=7.4.2" }
 pytest-cov = ">=4.1.0"
 coverage = ">=7.3.1"
 pre-commit = ">=3.3.1"
-ruff = ">=0.0.290"
+ruff = ">=0.1"
 safety = ">=2.3.4, !=2.3.5"
 typeguard = ">=4.1.5"
 commitizen = ">=3.10"
