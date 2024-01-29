@@ -1,3 +1,14 @@
+## v0.7.0 (2024-01-29)
+
+### Feat
+
+- **pyauxlib.io.yamlio**: add generator of yaml template from a pydantic model
+
+### Refactor
+
+- **pyauxlib.io.yamlio.py**: parse yaml files using ruamel.yaml instead of pyyaml
+- **decorators.warning**: change behavior of warning decorators
+
 ## v0.6.1 (2023-12-27)
 
 ### Feat
