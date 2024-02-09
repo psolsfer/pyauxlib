@@ -10,7 +10,7 @@ logger = logging.getLogger(__name__)
 
 
 @experimental
-def call_with_arguments(*argsdict: dict[Any, Any], callable_obj: Callable[..., Any]) -> Any:
+def call_with_args(*argsdict: dict[Any, Any], callable_obj: Callable[..., Any]) -> Any:
     """Execute a callable object with provided arguments.
 
     This function checks if the required arguments of a callable object are included in the
@@ -45,7 +45,7 @@ def call_with_arguments(*argsdict: dict[Any, Any], callable_obj: Callable[..., A
         callable_accepts_kwargs = bool(varkw)
         callable_accepts_args = bool(varargs)
     except TypeError as err:
-        error_msg = "The provided object is not callable."
+        error_msg = f"Expected a callable object, but got {type(callable_obj).__name__}."
         logger.exception(error_msg)
         raise TypeError(error_msg) from err
 
@@ -54,7 +54,7 @@ def call_with_arguments(*argsdict: dict[Any, Any], callable_obj: Callable[..., A
         logger.error(error_msg)
         raise TypeError(error_msg)
 
-    argskwargs = _get_argskwargs(callable_obj)
+    argskwargs = _get_args_kwargs(callable_obj)
 
     # Merge all the dictionaries in *args
     # Values from last dictionaries overwrite existing keys in the previous
@@ -94,7 +94,7 @@ def call_with_arguments(*argsdict: dict[Any, Any], callable_obj: Callable[..., A
     return callable_obj(*args)
 
 
-def _get_argskwargs(callable_obj: Callable[..., Any]) -> list[str | None]:
+def _get_args_kwargs(callable_obj: Callable[..., Any]) -> list[str | None]:
     """Return a list with the args and kwargs of a callable.
 
     Parameters
