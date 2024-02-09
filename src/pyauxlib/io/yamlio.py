@@ -79,7 +79,7 @@ def generate_yaml_template(model: type[BaseModel]) -> str:  # noqa: C901
     ...     )
     >>> yaml_template = generate_yaml_template(MyModel)
     >>> with Path.open("model_template.yaml", "w") as file:
-    >>>     file.write(yaml_template)
+    ...     file.write(yaml_template)
 
     """
     yaml = YAML()
