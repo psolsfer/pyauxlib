@@ -1,3 +1,9 @@
+## v0.8.0 (2024-02-09)
+
+### Feat
+
+- **callables.args**: add validation for arguments
+
 ## v0.7.0 (2024-01-29)
 
 ### Feat
