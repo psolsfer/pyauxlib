@@ -5,7 +5,7 @@ import time
 from collections.abc import Generator
 from fnmatch import fnmatch
 from pathlib import Path
-from typing import NamedTuple
+from typing import IO, Any, NamedTuple
 
 from pyauxlib.io.utils import clean_file_extension
 
@@ -149,7 +149,47 @@ def iterate_folder(  # noqa: PLR0913
             )
 
 
-def create_folder(path: Path, includes_file: bool = False) -> None:
+def open_file(path: Path, mode: str = "w", encoding: str | None = None) -> IO[Any]:
+    """Safely open a file using the provided path, mode, and encoding.
+
+    This function ensures that the folder containing the file exists before attempting to open it.
+
+    Parameters
+    ----------
+    path : Path
+        The path to the file to be opened.
+    mode : str, optional
+        The mode in which the file is to be opened, by default 'w'.
+    encoding : str | None, optional
+        The encoding to be used when opening the file, by default None.
+
+    Returns
+    -------
+    IO[Any]
+        The opened file.
+
+    Raises
+    ------
+    PermissionError
+        If the function does not have permission to create the directory or open the file.
+    """
+    try:
+        return path.open(mode=mode, encoding=encoding)
+    except FileNotFoundError:
+        if mode in {"r", "r+"}:
+            # If trying to read but the file doesn't exist, re-raise the exception
+            raise
+
+        folder_created = create_folder(path, True)
+        try:
+            return path.open(mode=mode, encoding=encoding)
+        except Exception:
+            if folder_created and not any(path.iterdir()):
+                path.rmdir()
+            raise
+
+
+def create_folder(path: Path, includes_file: bool = False) -> bool:
     """Create the folder passed in the 'path' if it doesn't exist.
 
     Useful to be sure that a folder exists before saving a file.
@@ -160,14 +200,24 @@ def create_folder(path: Path, includes_file: bool = False) -> None:
         Path object for the folder (can also include the file)
     includes_file : bool, optional
         The path includes a file at the end, by default 'False'.
+
+    Returns
+    -------
+    bool
+        True if the folder was created, False otherwise.
     """
     path = path.parent if includes_file else path
+
+    if path.exists():
+        return False
 
     try:
         path.mkdir(parents=True, exist_ok=True)
     except PermissionError:
         logger.warning("Failed to create folder '%s': no permission", path)
         raise
+    else:
+        return True
 
 
 def clean_filename(filename: str, replacement: str = "_") -> str:
