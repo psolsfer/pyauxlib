@@ -1,3 +1,9 @@
+## v0.8.1 (2024-02-17)
+
+### Feat
+
+- **pyauxlib.io.filesfolders**: add safe open file that creates folder path if it doesn't exist
+
 ## v0.8.0 (2024-02-09)
 
 ### Feat
