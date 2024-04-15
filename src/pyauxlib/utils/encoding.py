@@ -30,7 +30,7 @@ def detect_encoding(file: str | Path) -> str | None:
     Returns
     -------
     encoding : str | None
-        encoding of the file (None if file is not found)
+        encoding of the file (None if file is not found, or no encoding can be detected)
     """
     codecs = {
         BOM_UTF8: "utf_8_sig",
@@ -40,25 +40,23 @@ def detect_encoding(file: str | Path) -> str | None:
         BOM_UTF32: "utf_32",
         BOM_UTF32_BE: "utf_32_be",
         BOM_UTF32_LE: "utf_32_le",
+        b"": "utf-8",
     }
     file = Path(file) if isinstance(file, str) else file
     try:
         with Path.open(file, "rb") as f:
-            # Reads the first 5 bytes
-            beginning = f.read(5)
-            if beginning[0:2] in codecs:
-                encoding = codecs[beginning[0:2]]  # type: ignore[index]
-            elif beginning[0:3] in codecs:
-                encoding = codecs[beginning[0:3]]  # type: ignore[index]
-            elif beginning[0:4] in codecs:
-                encoding = codecs[beginning[0:4]]  # type: ignore[index]
-            elif beginning[0:5] in codecs:
-                encoding = codecs[beginning[0:5]]  # type: ignore[index]
-            else:
-                encoding = "utf-8"
-            return encoding
+            for bom, encoding in codecs.items():
+                f.seek(0)
+                first_chars = f.read(len(bom))
+                if first_chars == bom:
+                    return encoding
+        return None
     except FileNotFoundError as err:
         logger.warning("Error %s loading file: %s", err, file)
+        return None
+    else:
+        if chardet is not None:
+            return detect_encoding_chardet(file)
         return None
 
 
@@ -100,11 +98,8 @@ def detect_encoding_chardet(file: str | Path) -> str | None:
     file = Path(file) if isinstance(file, str) else file
     try:
         with Path.open(file, "rb") as f:
-            raw_data = f.read()
+            result = chardet.detect(f.read())
+            return result["encoding"]
     except FileNotFoundError:
         logger.warning("Error %s loading file", file)
         return None
-
-    result = chardet.detect(raw_data)
-    encoding = result["encoding"]
-    return encoding
