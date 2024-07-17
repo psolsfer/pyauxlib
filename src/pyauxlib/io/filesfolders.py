@@ -123,12 +123,17 @@ def iterate_folder(  # noqa: PLR0913
     """
     current_folder = Path(folder).parent if Path(folder).is_file() else Path(folder)
 
-    file_extensions = [".*"] if file_extensions is None else file_extensions
-    file_extensions = [clean_file_extension(ext) for ext in file_extensions]
+    if not current_folder.exists():
+        raise FileNotFoundError(f"The folder '{current_folder}' does not exist.")
+
+    file_extensions = (
+        [".*"]
+        if file_extensions is None
+        else [clean_file_extension(ext) for ext in file_extensions]
+    )
 
     parent_path = parent_path or current_folder
-
-    for entry in current_folder.iterdir():
+    for entry in current_folder.rglob("*" if subfolders else "*.*"):
         # Only returns files, not folders
         if entry.is_file() and any(re.match(ext, entry.suffix.lower()) for ext in file_extensions):
             if (
@@ -136,17 +141,7 @@ def iterate_folder(  # noqa: PLR0913
                 or any(fnmatch(entry.name, pattern) for pattern in file_patterns)
                 != exclude_patterns
             ):
-                yield FileRelPath(entry, current_folder.relative_to(parent_path))
-        # Check the subfolders
-        elif entry.is_dir() and subfolders:
-            yield from iterate_folder(
-                folder=entry,
-                subfolders=True,
-                file_extensions=file_extensions,
-                file_patterns=file_patterns,
-                exclude_patterns=exclude_patterns,
-                parent_path=parent_path,
-            )
+                yield FileRelPath(entry, entry.relative_to(parent_path))
 
 
 def open_file(path: Path, mode: str = "w", encoding: str | None = None) -> IO[Any]:
