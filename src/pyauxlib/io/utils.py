@@ -9,8 +9,6 @@ def clean_file_extension(extension: str) -> str:
 
     It adds the '.' in case it's not present
     """
-    dot_index = extension.find(".")
-
-    clean_extension = "." + extension if dot_index == -1 else extension[dot_index:]
-
-    return clean_extension.lower()
+    if not extension.startswith("."):
+        extension = "." + extension
+    return extension.lower()
