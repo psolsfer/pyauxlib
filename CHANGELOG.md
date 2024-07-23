@@ -1,3 +1,9 @@
+## v0.9.2 (2024-07-23)
+
+### Fix
+
+- **encoding**: fix some code unreachable errors and other minor things
+
 ## v0.9.1 (2024-07-23)
 
 ### Fix
