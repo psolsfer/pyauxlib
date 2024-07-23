@@ -1,3 +1,15 @@
+## v0.9.0 (2024-07-23)
+
+### Feat
+
+- **logger.py**: improve logger functioning
+
+### Refactor
+
+- **iterate_folder**: simplify code to iterate folders
+- update certifi
+- **encoding.py**: improve and simplify handling of encoding
+
 ## v0.8.1 (2024-02-17)
 
 ### Feat
