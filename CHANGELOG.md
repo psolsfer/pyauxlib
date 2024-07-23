@@ -1,3 +1,9 @@
+## v0.9.1 (2024-07-23)
+
+### Fix
+
+- **actions**: update setup-python to v6
+
 ## v0.9.0 (2024-07-23)
 
 ### Feat
