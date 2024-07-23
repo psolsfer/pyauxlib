@@ -97,8 +97,11 @@ class Timer:
     >>> t = Timer()
     >>> t.start()
     >>> # code here
-    >>> t.stop()
-    0.0
+    >>> elapsed = t.stop()
+    >>> isinstance(elapsed, float)
+    True
+    >>> elapsed >= 0
+    True
 
 
     >>> # Context manager usage
