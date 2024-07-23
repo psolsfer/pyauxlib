@@ -1,3 +1,9 @@
+## v0.9.3 (2024-07-23)
+
+### Fix
+
+- **whole-project**: fix some troubles with tests
+
 ## v0.9.2 (2024-07-23)
 
 ### Fix
