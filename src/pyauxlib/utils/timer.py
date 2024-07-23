@@ -93,31 +93,34 @@ class Timer:
     Example usage:
 
     ```python
-    # Manual usage
-    t = Timer()
-    t.start()
-    # code here
-    t.stop()
+    >>> # Manual usage
+    >>> t = Timer()
+    >>> t.start()
+    >>> # code here
+    >>> t.stop()
+    0.0
 
-    # Context manager usage
-    with Timer() as t:
-        # code here
-        t.add_timestamp("#1")
-        # more code
-        # The timer will automatically be stopped when exiting the context manager
 
-    # Decorator usage
-    timer = Timer()
-    @timer
-    def some_function():
-        # function code
+    >>> # Context manager usage
+    >>> with Timer() as t:
+    ...     # code here
+    ...     t.add_timestamp("#1")
+    ...     # more code
+    ...     # The timer will automatically be stopped when exiting the context manager
+
+    >>> # Decorator usage
+    >>> timer = Timer()
+    >>> @timer
+    ... def some_function():
+    ...     # function code
+    ...     pass
 
     # Decorator usage with 'timer' helper function
-    >>> from pyauxlib.decorators.timer import timer
-    >>> @timer(filename='timer.txt')
-    >>> def some_function():
-    >>>    # function code
+    from pyauxlib.decorators.timer import timer
 
+    @timer(filename='timer.txt')
+    def some_function():
+        # function code
     ```
     """
 

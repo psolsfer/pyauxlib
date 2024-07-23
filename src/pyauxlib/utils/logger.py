@@ -1,8 +1,10 @@
 """Logging functions."""
 import logging
 import logging.handlers
+import sys
 from datetime import datetime, timezone
 from pathlib import Path
+from typing import ClassVar
 
 from pyauxlib.io.filesfolders import create_folder
 
@@ -34,24 +36,28 @@ def _set_level(level: int | str | None, default_level: int | str = "INFO") -> in
 
     Raises
     ------
-    TypeError
-        If `level` is not None, a string, or an integer.
     ValueError
-        If `level` is a string but not a valid logging level.
+        If the level string is not a valid logging level.
+    TypeError
+        If the level is not None, int, or str.
     """
-    if level is not None and not isinstance(level, (str | int)):
-        raise TypeError
-
     if level is None:
-        return _set_level(default_level)
-    if isinstance(level, str):
-        level_upper = level.upper()
-        if level_upper not in logging._nameToLevel:  # noqa: SLF001
-            error_msg = f"Invalid logging level: {level}"
-            raise ValueError(error_msg)
-        return int(logging.getLevelName(level.upper()))
+        level = default_level
 
-    return level
+    if isinstance(level, int):
+        return level
+
+    if isinstance(level, str):
+        try:
+            return logging._nameToLevel[level.upper()]  # noqa: SLF001
+        except KeyError as err:
+            valid_levels = ", ".join(logging._nameToLevel.keys())  # noqa: SLF001
+            error_msg = f"Invalid logging level: {level}. Valid levels are: {valid_levels}"
+            logging.getLevelName(level.upper())
+            raise ValueError(error_msg) from err
+
+    error_msg = f"Level must be an int, string, or None, not {type(level)}"
+    raise TypeError(error_msg)
 
 
 def init_logger(  # noqa: PLR0913
@@ -60,87 +66,114 @@ def init_logger(  # noqa: PLR0913
     level_console: int | str | None = None,
     level_file: int | str | None = None,
     output_folder: Path | None = None,
-    file_size: int = 0,
+    file_size: int = 1024 * 1024,
     propagate: bool = False,
     output_console: bool = True,
+    colored_console: bool = True,
     output_format: str = "%(asctime)s - %(name)s - %(levelname)s - %(message)s",
 ) -> logging.Logger:
-    """Initialize the logger.
+    """Initialize the logger with enhanced features.
 
     Parameters
     ----------
     name : str
-        name of the logger
-    level : int | str, optional
-        level of the logger, by default "INFO"
+        Name of the logger.
+    level : int or str, optional
+        Overall logging level, by default "INFO".
         Any of the levers of logging can be passed as a string:
         ['CRITICAL', 'FATAL', 'ERROR', 'WARN', 'WARNING', 'INFO', 'DEBUG', 'NOTSET']
-        Note that lower case letters can also be used
-    level_console : int | str | None, optional
-        level of the console logger, by default None
-    level_file : int | str | None, optional
-        level of the file logger, by default None
-    output_folder : Path, optional
-        folder to output the log, by default None
+        Note that lower case letters can also be used.
+    level_console : int or str or None, optional
+        Console logging level, by default None.
+    level_file : int or str or None, optional
+        File logging level, by default None.
+    output_folder : Path or None, optional
+        Folder to save log files, by default None.
     file_size : int, optional
-        maximum size of the output file in bytes, by default 0 (=unlimited size)
+        Maximum size of log files before rotation, by default 1MB.
     propagate : bool, optional
-        the log messages are passed or not to the parent logger, by default False
+        Whether to propagate logs to parent loggers, by default False.
     output_console : bool, optional
-        output the log to the console, by default True
+        Whether to output logs to console, by default True.
+    colored_console : bool, optional
+        Use colors in the console output
     output_format : str, optional
-        format of the output
+        Format string for log messages, by default "%(asctime)s - %(name)s - %(levelname)s - %(threadName)s - %(message)s".
 
     Returns
     -------
     logging.Logger
-        logger
-    """
-    # FIXME Need some way to handle if the passed level string is not correct
-    level = _set_level(level)
+        Configured logger instance.
 
-    level_console = _set_level(level_console, default_level=level)
-    level_file = _set_level(level_file, default_level=level)
+    Raises
+    ------
+    ValueError
+        If an invalid logging level is provided.
+    """
+    logger = logging.getLogger(name)
+    try:
+        level = _set_level(level)
+        level_console = _set_level(level_console, default_level=level)
+        level_file = _set_level(level_file, default_level=level)
+    except (ValueError, TypeError) as e:
+        error_msg = f"Invalid logging level: {str(e)}"
+        raise ValueError(error_msg) from e
 
     level = min([level, level_console, level_file])
 
+    logger.setLevel(level=level)
+    logger.propagate = propagate
+
     formatter = logging.Formatter(output_format)
 
-    handler_list: list[logging.Handler] = []
     if output_folder is not None:
-        # Timestamp for the log file name
         create_folder(output_folder, includes_file=False)
         timestamp = datetime.now(tz=timezone.utc).astimezone().strftime("%Y%m%d_%H%M%S")
-        output_file_with_timestamp = output_folder / f"{timestamp}.log"
+        log_file = output_folder / f"{name}_{timestamp}.log"
 
         file_handler = logging.handlers.RotatingFileHandler(
-            filename=output_file_with_timestamp, maxBytes=file_size, backupCount=5
+            filename=log_file, maxBytes=file_size, backupCount=5
         )
         file_handler.setLevel(level_file)
         file_handler.setFormatter(formatter)
-        handler_list.append(file_handler)
+        logger.addHandler(file_handler)
 
     if output_console:
-        console_handler = logging.StreamHandler()
+
+        class ColorFormatter(logging.Formatter):
+            """Logging formatter adding console colors to the output."""
+
+            COLORS: ClassVar[dict[str, str]] = {
+                "DEBUG": "\033[0;36m",  # Cyan
+                "INFO": "\033[0;32m",  # Green
+                "WARNING": "\033[0;33m",  # Yellow
+                "ERROR": "\033[0;31m",  # Red
+                "CRITICAL": "\033[0;35m",  # Magenta
+                "RESET": "\033[0m",  # Reset
+            }
+
+            def format(self, record: logging.LogRecord) -> str:
+                """Format the specified record as text.
+
+                Parameters
+                ----------
+                record : logging.LogRecord
+                    The log record to format.
+
+                Returns
+                -------
+                str
+                    The formatted log record with color codes.
+                """
+                log_message = super().format(record)
+                return f"{self.COLORS.get(record.levelname, self.COLORS['RESET'])}{log_message}{self.COLORS['RESET']}"
+
+        console_handler = logging.StreamHandler(sys.stdout)
         console_handler.setLevel(level_console)
-        console_handler.setFormatter(formatter)
-        handler_list.append(console_handler)
+        if colored_console:
+            console_handler.setFormatter(ColorFormatter(output_format))
+        else:
+            console_handler.setFormatter(formatter)
+        logger.addHandler(console_handler)
 
-    logger = logging.getLogger(name)
-
-    # ??? Do I need to set the basicConfig for the root logger?
-    # Check if the parent is the root logger
-    """# if logger.parent == logging.getLogger():
-    #     logging.basicConfig(
-    #         level=level,
-    #         # format=output_format,
-    #         handlers=handler_list,
-    #     )
-
-    # logger = logging.getLogger(name)"""
-
-    logger.setLevel(level=level)
-    logger.propagate = propagate
-    for handler in handler_list:
-        logger.addHandler(handler)
     return logger

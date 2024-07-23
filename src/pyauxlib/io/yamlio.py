@@ -78,9 +78,15 @@ def generate_yaml_template(model: type[BaseModel]) -> str:  # noqa: C901
     ...         "Literals", description="This is a literal"
     ...     )
     >>> yaml_template = generate_yaml_template(MyModel)
-    >>> with Path.open("model_template.yaml", "w") as file:
-    ...     file.write(yaml_template)
-
+    >>> print(yaml_template)  # doctest: +NORMALIZE_WHITESPACE
+    field1:  # [str] Description for field1
+    field2: # [int] Description for field2
+    field3: true # [bool] Using a default value
+    field4:
+        testing:  # [str] Nested models...
+        testing2: # [str] ... work
+    field_literal: Literals # [Literals, also, Work] This is a literal
+    <BLANKLINE>
     """
     yaml = YAML()
     yaml.indent(mapping=4, sequence=4, offset=2)
@@ -97,7 +103,6 @@ def generate_yaml_template(model: type[BaseModel]) -> str:  # noqa: C901
         -------
         CommentedMap
             The template as a CommentedMap.
-
         """
         template = CommentedMap()
         for name, field in model.__annotations__.items():
