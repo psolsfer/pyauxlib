@@ -13,8 +13,11 @@ from pathlib import Path
 
 try:
     import chardet
+
+    HAS_CHARDET = True
 except ImportError:
     chardet = None  # type: ignore[assignment]
+    HAS_CHARDET = False
 
 logger = logging.getLogger(__name__)
 
@@ -42,21 +45,19 @@ def detect_encoding(file: str | Path) -> str | None:
         BOM_UTF32_LE: "utf_32_le",
         b"": "utf-8",
     }
-    file = Path(file) if isinstance(file, str) else file
+    file_path = Path(file)
     try:
-        with Path.open(file, "rb") as f:
+        with Path.open(file_path, "rb") as f:
+            first_chars = f.read(max(len(bom) for bom in codecs))
             for bom, encoding in codecs.items():
-                f.seek(0)
-                first_chars = f.read(len(bom))
-                if first_chars == bom:
+                if first_chars.startswith(bom):
                     return encoding
+        # If no BOM is detected, try chardet if available
+        if HAS_CHARDET:
+            return detect_encoding_chardet(file_path)
         return None
     except FileNotFoundError as err:
-        logger.warning("Error %s loading file: %s", err, file)
-        return None
-    else:
-        if chardet is not None:
-            return detect_encoding_chardet(file)
+        logger.warning("Error %s loading file: %s", err, file_path)
         return None
 
 
