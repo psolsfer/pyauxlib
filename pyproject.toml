@@ -154,20 +154,22 @@ xfail_strict = true
 
 [tool.ruff]  # https://github.com/charliermarsh/ruff
 fix = true
-ignore-init-module-imports = true
 line-length = 100
-select = ["A", "ASYNC", "B", "BLE", "C4", "C90", "D", "DTZ", "E", "EM", "ERA", "F", "FLY", "G", "I", "ICN", "INP", "ISC", "N", "NPY", "PGH", "PIE", "PLC", "PLE", "PLR", "PLW", "PT", "PTH", "PYI", "RET", "RSE", "RUF", "S", "SIM", "SLF", "T10", "T20", "TCH", "TID", "TRY", "UP", "W", "YTT"]
-ignore = ["E501", "PGH001", "RET504", "S101", "PT001"]
-unfixable = ["ERA001", "F401", "F841", "T201", "T203"]
 target-version = "py310"
 
-[tool.ruff.flake8-tidy-imports]
+[tool.ruff.lint]
+ignore-init-module-imports = true
+ignore = ["E501", "PGH001", "RET504", "S101", "PT001"]
+select = ["A", "ASYNC", "B", "BLE", "C4", "C90", "D", "DTZ", "E", "EM", "ERA", "F", "FLY", "G", "I", "ICN", "INP", "ISC", "N", "NPY", "PGH", "PIE", "PLC", "PLE", "PLR", "PLW", "PT", "PTH", "PYI", "RET", "RSE", "RUF", "S", "SIM", "SLF", "T10", "T20", "TCH", "TID", "TRY", "UP", "W", "YTT"]
+unfixable = ["ERA001", "F401", "F841", "T201", "T203"]
+
+[tool.ruff.lint.flake8-tidy-imports]
 ban-relative-imports = "all"
 
-[tool.ruff.pycodestyle]
+[tool.ruff.lint.pycodestyle]
 max-doc-length = 100
 
-[tool.ruff.pydocstyle]
+[tool.ruff.lint.pydocstyle]
 convention = "numpy"
 
 [tool.ruff.format]

@@ -56,7 +56,7 @@ def _set_level(level: int | str | None, default_level: int | str = "INFO") -> in
             logging.getLevelName(level.upper())
             raise ValueError(error_msg) from err
 
-    error_msg = f"Level must be an int, string, or None, not {type(level)}"
+    error_msg = f"Level must be an int, string, or None, not {type(level)}"  # type: ignore
     raise TypeError(error_msg)
 
 
@@ -116,7 +116,7 @@ def init_logger(  # noqa: PLR0913
         level_console = _set_level(level_console, default_level=level)
         level_file = _set_level(level_file, default_level=level)
     except (ValueError, TypeError) as e:
-        error_msg = f"Invalid logging level: {str(e)}"
+        error_msg = f"Invalid logging level: {e!s}"
         raise ValueError(error_msg) from e
 
     level = min([level, level_console, level_file])

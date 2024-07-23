@@ -1,10 +1,9 @@
 """Test for the logger."""
 import logging
-import os
 import shutil
 from collections.abc import Generator
 from pathlib import Path
-from typing import Any, cast
+from typing import Any
 
 import pytest
 from pyauxlib.utils.logger import _set_level, init_logger
@@ -184,7 +183,7 @@ def test_init_logger_color_output(capfd: Any) -> None:
 
 
 @pytest.fixture(autouse=True)
-def cleanup() -> Generator[None, None, None]:
+def _cleanup() -> Generator[None, None, None]:
     """Fixture to clean up the log folder after each test.
 
     This fixture ensures that the log folder is cleaned up
