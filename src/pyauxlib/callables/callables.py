@@ -84,7 +84,7 @@ def call_with_args(*argsdict: dict[Any, Any], callable_obj: Callable[..., Any]) 
                 error_msg = f"Argument '{arg_name}' is missing"
                 raise TypeError(error_msg)
         elif arg_name in arguments:
-            kwargs[arg_name] = arguments[arg_name] if arg_name in arguments else v.default
+            kwargs[arg_name] = arguments.get(arg_name, v.default)
 
     if callable_accepts_kwargs:
         return callable_obj(**kwargs)
