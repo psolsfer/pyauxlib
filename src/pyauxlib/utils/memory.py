@@ -1,4 +1,5 @@
 """Basic memory tracker."""
+
 import tracemalloc
 from tracemalloc import Snapshot, StatisticDiff
 

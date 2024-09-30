@@ -1,9 +1,11 @@
 """Tests for `pyauxlib.utils.timer`."""
+
 import io
 import logging
 import time
 
 import pytest
+
 from pyauxlib.decorators import timer
 from pyauxlib.utils.timer import Timer
 

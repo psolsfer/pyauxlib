@@ -1,4 +1,5 @@
 """Handling of zip files."""
+
 import zipfile
 from collections.abc import Generator
 from pathlib import Path

@@ -1,4 +1,5 @@
 """YAML-related functions."""
+
 import io
 import logging
 from pathlib import Path
@@ -122,12 +123,12 @@ def generate_yaml_template(model: type[BaseModel]) -> str:  # noqa: C901
                 field_type = ", ".join(map(str, get_args(field)))
             elif origin == UnionType:
                 field_type = ", ".join([arg.__name__ for arg in get_args(field)])
-            elif origin == dict:
+            elif origin is dict:
                 key_type, value_type = (
                     t.__name__ if t.__name__ is not None else str(t) for t in get_args(field)
                 )
                 field_type = f"dict[{key_type}, {value_type}]"
-            elif origin == list:
+            elif origin is list:
                 value_type = get_args(field)[0].__name__
                 field_type = f"list[{value_type}]"
             elif issubclass(field, BaseModel):

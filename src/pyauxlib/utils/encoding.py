@@ -1,4 +1,5 @@
 """Encoding-related functions."""
+
 import logging
 from codecs import (
     BOM_UTF8,
@@ -52,12 +53,13 @@ def detect_encoding(file: str | Path) -> str | None:
             for bom, encoding in codecs.items():
                 if first_chars.startswith(bom):
                     return encoding
+    except FileNotFoundError as err:
+        logger.warning("Error %s loading file: %s", err, file_path)
+        return None
+    else:
         # If no BOM is detected, try chardet if available
         if HAS_CHARDET:
             return detect_encoding_chardet(file_path)
-        return None
-    except FileNotFoundError as err:
-        logger.warning("Error %s loading file: %s", err, file_path)
         return None
 
 

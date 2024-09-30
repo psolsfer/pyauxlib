@@ -1,4 +1,5 @@
 """Functions related to files and folders."""
+
 import logging
 import re
 import time
@@ -124,7 +125,8 @@ def iterate_folder(  # noqa: PLR0913
     current_folder = Path(folder).parent if Path(folder).is_file() else Path(folder)
 
     if not current_folder.exists():
-        raise FileNotFoundError(f"The folder '{current_folder}' does not exist.")
+        msg = f"The folder '{current_folder}' does not exist."
+        raise FileNotFoundError(msg)
 
     file_extensions = (
         [".*"]
@@ -135,7 +137,7 @@ def iterate_folder(  # noqa: PLR0913
     parent_path = parent_path or current_folder
     for entry in current_folder.rglob("*" if subfolders else "*.*"):
         # Only returns files, not folders
-        if entry.is_file() and any(re.match(ext, entry.suffix.lower()) for ext in file_extensions):
+        if entry.is_file() and any(re.match(ext, entry.suffix.lower()) for ext in file_extensions):  # noqa: SIM102
             if (
                 file_patterns is None
                 or any(fnmatch(entry.name, pattern) for pattern in file_patterns)

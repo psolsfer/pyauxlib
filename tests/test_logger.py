@@ -1,11 +1,14 @@
 """Test for the logger."""
+
 import logging
+import re
 import shutil
 from collections.abc import Generator
 from pathlib import Path
 from typing import Any
 
 import pytest
+
 from pyauxlib.utils.logger import _set_level, init_logger
 
 LOGS_PATH = Path("test_logs")
@@ -23,11 +26,13 @@ def test_set_level() -> None:
     assert _set_level(logging.INFO) == logging.INFO
     assert _set_level(None, default_level="ERROR") == logging.ERROR
 
-    with pytest.raises(ValueError):
+    with pytest.raises(
+        ValueError, match=re.escape("Invalid logging level: INVALID_LEVEL. Valid levels are:")
+    ):
         _set_level("INVALID_LEVEL")
 
     # with pytest.raises(TypeError): # ??? Typeguard doesn't allow this test
-    #     _set_level([])
+    #     _set_level([])  # noqa: ERA001
 
 
 def test_init_logger() -> None:

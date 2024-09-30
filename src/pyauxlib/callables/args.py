@@ -1,4 +1,5 @@
 """Functions related to arguments."""
+
 import inspect
 import types
 

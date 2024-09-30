@@ -1,4 +1,5 @@
 """Tests for `pyauxlib.utils.dictionaries`."""
+
 from typing import Any
 
 from pyauxlib.utils.dictionaries import is_empty_or_none, remove_keys

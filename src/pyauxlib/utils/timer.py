@@ -1,4 +1,5 @@
 """Module providing the Timer class for measuring and logging execution times."""
+
 import contextlib
 import csv
 import io
