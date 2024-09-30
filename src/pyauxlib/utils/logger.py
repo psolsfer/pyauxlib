@@ -42,10 +42,6 @@ def _set_level(level: int | str | None, default_level: int | str = "INFO") -> in
     TypeError
         If the level is not None, int, or str.
     """
-    if not isinstance(level, int | str | None):
-        msg = f"Level must be an int, string, or None, not {type(level)}"
-        raise TypeError(msg)
-
     if level is None:
         level = default_level
 
