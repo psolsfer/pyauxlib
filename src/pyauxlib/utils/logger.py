@@ -1,4 +1,5 @@
 """Logging functions."""
+
 import logging
 import logging.handlers
 import sys
@@ -41,23 +42,22 @@ def _set_level(level: int | str | None, default_level: int | str = "INFO") -> in
     TypeError
         If the level is not None, int, or str.
     """
+    if not isinstance(level, int | str | None):
+        msg = f"Level must be an int, string, or None, not {type(level)}"
+        raise TypeError(msg)
+
     if level is None:
         level = default_level
 
     if isinstance(level, int):
         return level
 
-    if isinstance(level, str):
-        try:
-            return logging._nameToLevel[level.upper()]  # noqa: SLF001
-        except KeyError as err:
-            valid_levels = ", ".join(logging._nameToLevel.keys())  # noqa: SLF001
-            error_msg = f"Invalid logging level: {level}. Valid levels are: {valid_levels}"
-            logging.getLevelName(level.upper())
-            raise ValueError(error_msg) from err
-
-    error_msg = f"Level must be an int, string, or None, not {type(level)}"  # type: ignore
-    raise TypeError(error_msg)
+    try:
+        return logging._nameToLevel[level.upper()]  # noqa: SLF001
+    except KeyError as err:
+        valid_levels = ", ".join(logging._nameToLevel.keys())  # noqa: SLF001
+        error_msg = f"Invalid logging level: {level}. Valid levels are: {valid_levels}"
+        raise ValueError(error_msg) from err
 
 
 def init_logger(  # noqa: PLR0913
@@ -98,7 +98,8 @@ def init_logger(  # noqa: PLR0913
     colored_console : bool, optional
         Use colors in the console output
     output_format : str, optional
-        Format string for log messages, by default "%(asctime)s - %(name)s - %(levelname)s - %(threadName)s - %(message)s".
+        Format string for log messages, by default:
+        "%(asctime)s - %(name)s - %(levelname)s - %(threadName)s - %(message)s".
 
     Returns
     -------

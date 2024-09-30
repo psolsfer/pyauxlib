@@ -19,20 +19,21 @@ classifiers = [
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
 ]
 packages = [
     { include = "pyauxlib", from = "src" },
-    { include = "tests", format = "sdist" },
+#    { include = "tests", format = "sdist" },
 ]
 include = [
-    "AUTHORS.md",
-    "CONTRIBUTING.md",
-    "HISTORY.md",
-    "LICENSE",
-    "py.typed",
-    "README.md",
-    "tests/**/*",
-    "docs/**/*.{md,py,jpg,png,gif}",
+#    "AUTHORS.md",
+#    "CONTRIBUTING.md",
+#    "HISTORY.md",
+#    "LICENSE",
+#    "py.typed",
+#    "README.md",
+#    "tests/**/*",
+#    "docs/**/*.{md,py,jpg,png,gif}",
 ]
 exclude = [
     "**/__pycache__",
@@ -158,7 +159,6 @@ line-length = 100
 target-version = "py310"
 
 [tool.ruff.lint]
-ignore-init-module-imports = true
 ignore = ["E501", "S307", "RET504", "S101", "PT001", "ISC001"]
 select = ["A", "ASYNC", "B", "BLE", "C4", "C90", "D", "DTZ", "E", "EM", "ERA", "F", "FLY", "G", "I", "ICN", "INP", "ISC", "N", "NPY", "PGH", "PIE", "PLC", "PLE", "PLR", "PLW", "PT", "PTH", "PYI", "RET", "RSE", "RUF", "S", "SIM", "SLF", "T10", "T20", "TCH", "TID", "TRY", "UP", "W", "YTT"]
 unfixable = ["ERA001", "F401", "F841", "T201", "T203"]

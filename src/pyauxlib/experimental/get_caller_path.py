@@ -1,4 +1,5 @@
 """Experimental function to get the path of caller of a function."""
+
 from inspect import currentframe, getframeinfo
 from pathlib import Path
 from types import FrameType

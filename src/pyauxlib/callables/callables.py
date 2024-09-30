@@ -1,4 +1,5 @@
 """Utilities for working with callable objects."""
+
 import inspect
 import logging
 from collections.abc import Callable

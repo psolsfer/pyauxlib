@@ -1,6 +1,5 @@
 """Decorators for warning messages."""
 
-
 import inspect
 import warnings
 from collections.abc import Callable
@@ -13,7 +12,7 @@ _routine_stacklevel = 2
 __all__ = ["deprecated", "deprecated_argument", "experimental"]
 
 
-def _get_msg(
+def _get_msg(  # noqa: PLR0913
     decorator_name: str,
     wrapped: Callable[..., Any],
     reason: str | None = None,

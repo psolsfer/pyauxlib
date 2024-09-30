@@ -1,4 +1,5 @@
 """Functions related to dictionaries."""
+
 from typing import Any
 
 
