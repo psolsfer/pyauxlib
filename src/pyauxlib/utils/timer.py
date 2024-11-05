@@ -7,14 +7,13 @@ import logging
 import time
 from collections.abc import Callable
 from pathlib import Path
+from typing import Any, ClassVar, Literal, Protocol
 
 import wrapt
 
 try:
-    from typing import Any, ClassVar, Literal, Protocol, Self  # Only works from Python 3.11
+    from typing import Self  # Only works from Python 3.11
 except ImportError:
-    from typing import Any, ClassVar, Literal, Protocol
-
     from typing_extensions import Self
 
 
@@ -236,7 +235,10 @@ class Timer:
         if not hasattr(self, "stop_time"):
             self.logger.warning("Timer has not been stopped yet.")
             return
-        if (filename := filename or self.filename) is None:
+        filename = filename or self.filename
+        if filename is None:
+            # NOTE Walrus operator fails in docstrings
+            # if (filename := filename or self.filename) is None:
             return
 
         filename = Path(filename)

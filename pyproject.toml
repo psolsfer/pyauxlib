@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "pyauxlib"
-version = "0.10.1"
+version = "0.10.2"
 description = "Python library designed to provide auxiliary functionalities that can enhance your Python project."
 authors = ["Pablo Solís-Fernández <psolsfer@gmail.com>"]
 readme = "README.md"
@@ -48,7 +48,7 @@ build-backend = "poetry.core.masonry.api"
 bump_message = "bump(release): v$current_version → v$new_version"
 tag_format = "v$version"
 update_changelog_on_bump = true
-version = "0.10.1"
+version = "0.10.2"
 version_files = [
     "pyproject.toml:version",
     "src/pyauxlib/__init__.py:__version__"
@@ -56,7 +56,7 @@ version_files = [
 
 [tool.poetry.dependencies] # https://python-poetry.org/docs/dependency-specification/
 chardet = { version = "^5", optional = true }
-python = ">=3.10,<3.13"
+python = ">=3.10,<3.14"
 pydantic = ">=2.4.0"
 ruamel-yaml = "^0"
 wrapt = ">=1.15"
