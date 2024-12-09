@@ -169,6 +169,7 @@ class Timer:
         kwargs: dict[str, Any],
     ) -> Any:
         """Measure the execution time of a decorated function or method."""
+        self.reset()
         self.start()
         result = wrapped(*args, **kwargs)
         elapsed_time = self.stop()
