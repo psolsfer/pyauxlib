@@ -128,8 +128,7 @@ def experimental(*args: Any, **kwargs: Any) -> Any:
 
 
 def deprecated(*args: Any, **kwargs: Any) -> Any:
-    """
-    Mark functions or classes as deprecated.
+    """Mark functions or classes as deprecated.
 
     Parameters
     ----------
