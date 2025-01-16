@@ -1,3 +1,9 @@
+## v0.11.0 (2025-01-16)
+
+### Feat
+
+- improved decorators for required imports
+
 ## v0.10.3 (2024-12-09)
 
 ### Fix
