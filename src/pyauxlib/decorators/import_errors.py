@@ -13,7 +13,6 @@ logger = logging.getLogger(__name__)
 
 
 F = TypeVar("F", bound=Callable[..., Any])
-T = TypeVar("T", bound=type)
 
 
 # Cache to store dependency availability
@@ -43,12 +42,12 @@ def check_dependency(dep_name: str, optional_deps: dict[str, bool] = OPTIONAL_DE
     Examples
     --------
         >>> OPTIONAL_DEPS = {}
-        >>> check_dependency("numpy", OPTIONAL_DEPS)
-        True  # If numpy is installed
+        >>> check_dependency("wrapt", OPTIONAL_DEPS)
+        True
         >>> check_dependency("nonexistent_package", OPTIONAL_DEPS)
         False
         >>> OPTIONAL_DEPS
-        {'numpy': True, 'nonexistent_package': False}
+        {'wrapt': True, 'nonexistent_package': False}
     """
     if dep_name not in OPTIONAL_DEPS:
         optional_deps[dep_name] = importlib.util.find_spec(dep_name) is not None
@@ -130,9 +129,8 @@ def packages_required(package_names: list[str]) -> Any:
     return require(*package_names)
 
 
-def require_class(*dependencies: str, raise_error: bool = True) -> Callable[[type[T]], type[T]]:
-    """
-    Class decorator to check for required dependencies.
+def require_class(*dependencies: str, raise_error: bool = True) -> Callable[[type[Any]], type[Any]]:
+    """Class decorator to check for required dependencies.
 
     Parameters
     ----------
@@ -144,11 +142,11 @@ def require_class(*dependencies: str, raise_error: bool = True) -> Callable[[typ
 
     Returns
     -------
-    Callable[[Type[T]], Type[T]]
+    Callable[[type[Any]], type[Any]]
         A decorator that enforces dependency requirements for a class.
     """
 
-    def class_decorator(cls: type[T]) -> type[T]:
+    def class_decorator(cls: type[Any]) -> type[Any]:
         missing_deps = [dep for dep in dependencies if not check_dependency(dep)]
 
         if not missing_deps:
