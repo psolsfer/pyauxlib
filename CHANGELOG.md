@@ -1,3 +1,13 @@
+## v0.12.0 (2025-01-23)
+
+### Feat
+
+- add filegroup to manage groups of files with related names
+
+### Fix
+
+- fix return type of require_class decorator and examples section of check_dependency docstring
+
 ## v0.11.0 (2025-01-16)
 
 ### Feat
