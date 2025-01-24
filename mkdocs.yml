@@ -1,6 +1,6 @@
-site_name: PyAuxLib
-repo_url: https://github.com/psolsfer/PyAuxLib
-repo_name: PyAuxLib
+site_name: pyauxlib
+repo_url: https://github.com/psolsfer/pyauxlib
+repo_name: pyauxlib
 
 site_dir: site
 
@@ -75,13 +75,22 @@ plugins:
                   options:
                       # Headings
                       show_root_heading: true
-                      show_root_full_path: false
+                      # show_root_full_path: false
                       # Docstrings
-                      show_if_no_docstring: true
+                      # show_if_no_docstring: true
                       # Signatures/annotations
-                      show_signature_annotations: true
+                      # show_signature_annotations: true
                       # Other
                       show_bases: false
+
+                      show_source: false
+                      heading_level: 2
+                      inherited_members: true
+                      docstring_style: numpy
+                      show_root_toc_entry: true
+                      show_category_heading: true
+                      show_submodules: false
+
     - awesome-pages
     - search:
           lang: en

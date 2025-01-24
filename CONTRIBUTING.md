@@ -31,8 +31,8 @@ and "help wanted" is open to whoever wants to implement it.
 
 ### Write Documentation
 
-PyAuxLib could always use more documentation, whether as part of the
-official PyAuxLib docs, in docstrings, or even on the web in blog posts,
+pyauxlib could always use more documentation, whether as part of the
+official pyauxlib docs, in docstrings, or even on the web in blog posts,
 articles, and such.
 
 ### Submit Feedback
@@ -57,7 +57,7 @@ Ready to contribute? Here's how to set up `pyauxlib` for local development.
     git clone <git@github.com>:your_name_here/pyauxlib.git
     ```
 
-3. Set up your local copy with Poetry.
+3. Set up your local copy with uv.
 
     First, navigate to your project directory:
 
@@ -68,7 +68,7 @@ Ready to contribute? Here's how to set up `pyauxlib` for local development.
     Then, create a new virtual environment and install the dependencies:
 
     ```bash linenums="0"
-    cd poetry install
+    uv sync
     ```
 
     This will create a new virtual environment (if one doesn’t already exist) and install the project dependencies
@@ -137,7 +137,7 @@ A reminder for the maintainers on how to deploy.
     Here’s how you can use Commitizen to commit your changes:
 
     ```bash linenums="0"
-    poetry run cz commit
+    uv run cz commit
     ```
 
     When you run this command, Commitizen will prompt you to fill out a commit message in a specific format. This format typically includes the type of change (e.g., feature, bugfix), a short description, and optionally a longer description and any breaking changes.
@@ -158,17 +158,17 @@ A reminder for the maintainers on how to deploy.
     The recommended method for updating the version number is to use [Commitizen]:
 
     ```bash linenums="0"
-    poetry run cz bump
+    uv run cz bump
     ```
 
     When you run this command, Commitizen will bump your project’s version according to the changes that have been made since the last release. It determines the type of version bump (major, minor, or patch) based on the commit messages. This is why it’s important to follow a standard commit message format.
 
     This command will also update the version in several files accross the project. These files must be defined in the `version_files` list under the `[tool.commitizen]` section in `pyproject.toml`.
 
-    If you are not using Commitizen, you can manually update the version number using [Poetry] (the new version can be 'major', 'minor', or 'patch'):
+    If you are not using Commitizen, you can manually update the version number using [uv] (the new version can be 'major', 'minor', or 'patch'):
 
     ```bash linenums="0"
-    poetry version minor
+    uv version minor
     ```
 
     However, note that while this will update the version in `pyproject.toml`, it won’t update the version strings in other files.
@@ -177,12 +177,12 @@ A reminder for the maintainers on how to deploy.
 
     After updating the version number, it’s important to install the package again for local development. This is because the version number is often used in the package’s metadata, and installing the package ensures that this metadata is updated.
 
-    When you install a Python package for local development using Poetry, it’s installed in editable mode. This means that changes to the source code will be immediately available in your environment, without needing to reinstall the package.
+    When you install a Python package for local development using uv, it’s installed in editable mode. This means that changes to the source code will be immediately available in your environment, without needing to reinstall the package.
 
-    Here’s how you can install the package for local development with Poetry:
+    Here’s how you can install the package for local development with uv:
 
     ```bash linenums="0"
-    poetry install
+    uv sync
     ```
 
     This command will install your package in editable mode, along with its dependencies.
@@ -197,16 +197,16 @@ A reminder for the maintainers on how to deploy.
         invoke test-all
         ```
 
-    === ":simple-poetry: Poetry"
+    === ":simple-uv: uv"
 
         ```bash linenums="0"
-        poetry run tox
+        uv run tox
         ```
 
         or
 
         ```bash linenums="0"
-        poetry run pytest
+        uv run pytest
         ```
 
 6. Push the commit
