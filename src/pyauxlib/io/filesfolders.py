@@ -14,14 +14,14 @@ logger = logging.getLogger(__name__)
 
 
 class FileRelPath(NamedTuple):
-    """Named tuple with the path of a file and the relative path to a parent path.
+    """Represents a file's absolute and relative paths.
 
     Attributes
     ----------
     file : Path
-        The absolute path of the file.
+        Absolute path.
     rel_path : Path
-        The relative path of the file with respect to a parent directory.
+        Path relative to parent directory.
     """
 
     file: Path
@@ -31,30 +31,29 @@ class FileRelPath(NamedTuple):
 def iterate_files(
     pathobject: Path, file_extensions: list[str] | None = None
 ) -> Generator[FileRelPath, None, None]:
-    """Yield files from a given path with optional file extension filtering.
+    """Yield files in a path with optional extension filtering.
 
-    This function takes a Path object and yields files from it. If the Path is a file,
-    it yields the file itself. If the Path is a directory, it yields all files in the
-    directory with a given extension, without recursing into subdirectories.
+    For directories, searches only the immediate contents without recursing into subdirectories.
+    For files, simply returns the file itself regardless of extension filtering.
 
     Parameters
     ----------
     pathobject : Path
-        The Path object to search for files.
+        The Path object to search for files. Can be either a file or directory path.
     file_extensions : list[str], optional
-        A list of file extensions to filter the files. If None (default), all files are yielded.
-        This parameter is ignored if `pathobject` is a file.
+        If provided, only files with these extensions will be included in the results.
+        Extensions are case-insensitive. When pathobject is a file, this parameter is ignored.
 
     Returns
     -------
     Generator[FileRelPath, None, None]
-        A generator yielding FileRelPath objects for each found file. Each FileRelPath includes
-        the absolute path of the file and its path relative to `pathobject`.
+        A stream of FileRelPath objects, each containing both the absolute path to the file
+        and its path relative to the 'pathobject'
 
     Raises
     ------
     FileNotFoundError
-        If `pathobject` does not exist.
+        When the specified 'pathobject' does not exist in the filesystem
     """
     if not pathobject.exists():
         error_msg = f"File or folder '{pathobject}' does not exist."
@@ -62,7 +61,7 @@ def iterate_files(
         raise FileNotFoundError(error_msg)
 
     if pathobject.is_file():
-        yield FileRelPath(pathobject, pathobject.relative_to(pathobject))
+        yield FileRelPath(pathobject, Path())
 
     if pathobject.is_dir():
         yield from iterate_folder(
@@ -81,46 +80,49 @@ def iterate_folder(  # noqa: PLR0913
     subfolders: bool = True,
     parent_path: Path | None = None,
 ) -> Generator[FileRelPath, None, None]:
-    """Yield files from a given folder, optionally filtering by extension and pattern.
+    """Yield files from a a folder with flexible filtering options for extensions and patterns.
 
-    This function iterates through a folder and its subfolders (if `subfolders` is True),
-    yielding files with specified extensions and name patterns. If the folder is a file,
-    it yields the file itself.
+    Supports both extension-based and pattern-based filtering, with options to include or exclude
+    files matching the specified patterns. Can search recursively through subdirectories if desired.
 
     Parameters
     ----------
     folder : str | Path
-        The parent folder to start the search.
+        The starting folder path for the file search. If a file path is provided, searches its
+        parent directory
     file_extensions : list[str], optional
-        List of file extensions to filter by. If None (default), all files are yielded.
+        If provided, only files with these extensions will be included. Extensions are
+        case-insensitive.
     file_patterns : list[str], optional
-        List of patterns that the file names should match. If None (default), all files are yielded.
-        If multiple patterns are provided, a file is returned if its name matches any pattern.
-        Patterns can include wildcards like '*' and '?', to match multiple
-        characters or a single character, respectively. For example:
-            - ["*before*"]: matches all files that have the word "before" in their name.
-            - ["*.txt"]: matches all files with the '.txt' extension.
-            - ["file_?.txt"]: matches all files with names like 'file_1.txt', 'file_2.txt', etc.
-            - ["file_[0-9].txt"]: equivalent to the previous example, but uses a character set
-              to match any digit between 0 and 9.
+        Glob patterns for filtering files by name. Files matching any pattern are included.
+        Patterns can include wildcards like '*' and '?', to match multiple characters or a single
+        character, respectively.
+        Pattern examples:
+        - ["*before*"]: Files containing 'before' anywhere in the name.
+        - ["*.txt"]: Files with the '.txt' extension.
+        - ["file_?.txt"]: Files with names like 'file_1.txt', 'file_2.txt', etc.
+        - ["file_[0-9].txt"]: Equivalent to the previous example, but uses a character set to match
+        any single digit between 0 and 9.
     exclude_patterns : bool, optional
-        If True, returns files that do not match `file_patterns`.
+        When True, reverses the pattern matching logic to exclude files that match the patterns
+        instead of including them.
     subfolders : bool, optional
-        If True (default), includes subfolders in the search.
+        When True, performs a recursive search through all subdirectories. Otherwise, only
+        searches the immediate folder contents.
     parent_path : Path, optional
-        The path of the parent, used to return the relative paths to reconstruct the folder
-        hierarchy
+        Reference path used for calculating relative paths in the results. If None, uses the
+        search starting folder.
 
-    Yields
-    ------
-    FileRelPath
-        A FileRelPath object for each found file, including the absolute path and
-        the path relative to `parent_path`.
+    Returns
+    -------
+    Generator[FileRelPath, None, None]
+        A stream of FileRelPath objects, each containing both the absolute path to a matched
+        file and its path relative to parent_path
 
     Raises
     ------
     FileNotFoundError
-        If `folder` does not exist.
+        When the specified folder path does not exist in the filesystem.
     """
     current_folder = Path(folder).parent if Path(folder).is_file() else Path(folder)
 
@@ -128,22 +130,28 @@ def iterate_folder(  # noqa: PLR0913
         msg = f"The folder '{current_folder}' does not exist."
         raise FileNotFoundError(msg)
 
-    file_extensions = (
-        [".*"]
-        if file_extensions is None
-        else [clean_file_extension(ext) for ext in file_extensions]
-    )
+    if file_extensions is not None:
+        file_extensions = [clean_file_extension(ext) for ext in file_extensions]
 
     parent_path = parent_path or current_folder
-    for entry in current_folder.rglob("*" if subfolders else "*.*"):
-        # Only returns files, not folders
-        if entry.is_file() and any(re.match(ext, entry.suffix.lower()) for ext in file_extensions):  # noqa: SIM102
-            if (
-                file_patterns is None
-                or any(fnmatch(entry.name, pattern) for pattern in file_patterns)
-                != exclude_patterns
-            ):
-                yield FileRelPath(entry, entry.relative_to(parent_path))
+
+    files = current_folder.rglob("*") if subfolders else current_folder.glob("*")
+    for file in files:
+        if not file.is_file():
+            continue
+
+        # Check extensions
+        if file_extensions and file.suffix.lower() not in file_extensions:
+            continue
+
+        # Check patterns
+        matches_pattern = (
+            any(fnmatch(file.name, pattern) for pattern in file_patterns) if file_patterns else True
+        )
+        if matches_pattern == exclude_patterns:
+            continue
+
+        yield FileRelPath(file=file, rel_path=file.relative_to(parent_path))
 
 
 def open_file(path: Path, mode: str = "w", encoding: str | None = None) -> IO[Any]:
