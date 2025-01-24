@@ -1,7 +1,6 @@
 """Functions related to files and folders."""
 
 import logging
-import re
 import time
 from collections.abc import Generator
 from fnmatch import fnmatch

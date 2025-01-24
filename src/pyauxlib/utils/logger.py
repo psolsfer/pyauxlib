@@ -3,7 +3,7 @@
 import logging
 import logging.handlers
 import sys
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import ClassVar
 
@@ -125,7 +125,7 @@ def init_logger(  # noqa: PLR0913
 
     if output_folder is not None:
         create_folder(output_folder, includes_file=False)
-        timestamp = datetime.now(tz=timezone.utc).astimezone().strftime("%Y%m%d_%H%M%S")
+        timestamp = datetime.now(tz=UTC).astimezone().strftime("%Y%m%d_%H%M%S")
         log_file = output_folder / f"{name}_{timestamp}.log"
 
         file_handler = logging.handlers.RotatingFileHandler(
