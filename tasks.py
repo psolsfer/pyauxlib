@@ -1,5 +1,5 @@
 """
-Tasks for maintaining the PyAuxLib package.
+Tasks for maintaining the pyauxlib package.
 
 Execute 'invoke --list' for guidance on using Invoke
 """
@@ -34,10 +34,9 @@ PYTHON_DIRS = [str(d) for d in [SOURCE_DIR, TEST_DIR]]
 def _delete_file(file: Path) -> None:
     file.unlink(missing_ok=True)
 
-
 def _run(c: Context, command: str, ignore_failure: bool = False) -> Result | None:
     try:
-        return c.run(f"poetry run {command}", pty=platform.system() != "Windows")
+        return c.run(f"uv run {command}", pty=platform.system() != "Windows")
     except Failure:
         if ignore_failure:
             return None
@@ -75,7 +74,7 @@ def lint(c: Context, check: bool = True) -> None:
 
 # Tests
 @task(help={"tox_env": "Environment name to run the test"})
-def test(c: Context, tox_env: str = "py313") -> None:
+def test(c: Context, tox_env: str = "py311") -> None:
     """Run tests with tox."""
     _run(c, f"tox -e {tox_env}")
 
@@ -143,7 +142,7 @@ def clean_build(c: Context) -> None:
     for dirpath in ["build", "dist", ".eggs"]:
         shutil.rmtree(dirpath, ignore_errors=True)
     for pattern in ["*.egg-info", "*.egg"]:
-        for filename in Path().glob("**/" + pattern):
+        for filename in Path().glob('**/' + pattern):
             if filename.is_dir():
                 shutil.rmtree(filename, ignore_errors=True)
             else:
@@ -154,7 +153,7 @@ def clean_build(c: Context) -> None:
 def clean_python(c: Context) -> None:
     """Clean up python file artifacts."""
     for pattern in ["*.pyc", "*.pyo", "*~", "__pycache__"]:
-        for filename in Path().glob("**/" + pattern):
+        for filename in Path().glob('**/' + pattern):
             try:
                 if filename.is_file():
                     filename.unlink(missing_ok=True)
@@ -194,20 +193,20 @@ def pre_release_check(c: Context) -> None:
 @task(clean)
 def dist(c: Context) -> None:
     """Build source and wheel packages."""
-    _run(c, "poetry build")
+    _run(c, "uv build")
 
 
 @task(dist)
 def release(c: Context) -> None:
     """Make a release of the python package to pypi."""
-    _run(c, "poetry publish")
+    _run(c, "uv publish")
 
 
 # Package installation
 @task(clean)
 def install_package(c: Context) -> None:
     """Install the package to the active Python's site-packages."""
-    _run(c, "poetry install")
+    _run(c, "uv sync")
 
 
 @task
@@ -220,27 +219,35 @@ def pre_commit_install(c: Context) -> None:
 def install(c: Context) -> None:
     """Install the package and the pre-commit hooks."""
 
-
-# Poetry
-@task
-def install_poetry(c: Context) -> None:
-    """Download and install Poetry."""
-    if os.name == "nt":  # Windows
-        c.run(
-            "(Invoke-WebRequest -Uri https://install.python-poetry.org -UseBasicParsing).Content | py -"
-        )
-    else:  # Unix/Linux/MacOS
-        c.run("curl -sSL https://install.python-poetry.org | python3 -")
-
+# pipx
 
 @task
-def remove_poetry(c: Context) -> None:
-    """Uninstall Poetry."""
+def install_pipx(c: Context) -> None:
+    """Download and install pipx."""
     if os.name == "nt":  # Windows
-        c.run(
-            "(Invoke-WebRequest -Uri https://raw.githubusercontent.com/python-poetry/poetry/master/install-poetry.py -UseBasicParsing).Content | py - --uninstall"
-        )
+        c.run("py -m pip install pipx")
     else:  # Unix/Linux/MacOS
-        c.run(
-            "curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/install-poetry.py | python3 - --uninstall"
-        )
+        c.run("python3 -m pip install pipx")
+
+
+# uv
+@task
+def install_uv(c: Context) -> None:
+    """Download and install uv."""
+    if os.name == "nt":  # Windows
+        c.run("powershell -ExecutionPolicy ByPass -c 'irm https://astral.sh/uv/install.ps1 | iex'")
+    else:  # Unix/Linux/MacOS
+        c.run("curl -LsSf https://astral.sh/uv/install.sh | sh")
+
+
+# @task
+# def remove_uv(c: Context) -> None:
+#     """Uninstall uv."""
+#     if os.name == "nt":  # Windows
+#         c.run(
+#             "(Invoke-WebRequest -Uri https://raw.githubusercontent.com/python-poetry/poetry/master/install-poetry.py -UseBasicParsing).Content | py - --uninstall"
+#         )
+#     else:  # Unix/Linux/MacOS
+#         c.run(
+#             "curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/install-poetry.py | python3 - --uninstall"
+#         )

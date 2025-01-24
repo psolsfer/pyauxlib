@@ -1,42 +1,43 @@
 {
-  "template": "https://github.com/psolsfer/Cookiecutter-PyPackage-Poet/",
-  "commit": "6b182175686730c7eb14d4a8a3aac79f9321d029",
-  "checkout": null,
-  "context": {
-    "cookiecutter": {
-      "full_name": "Pablo SolÌs-Fern·ndez",
-      "email": "psolsfer@gmail.com",
-      "github_username": "psolsfer",
-      "project_name": "PyAuxLib",
-      "project_slug": "pyauxlib",
-      "project_short_description": "Python library designed to provide auxiliary functionalities that can enhance your Python project.",
-      "pypi_username": "psolsfer",
-      "private_package_repository_name": "",
-      "private_package_repository_url": "",
-      "version": "0.1.2",
-      "python_version": "3.10",
-      "use_pytest": "y",
-      "formatter": "Ruff-format",
-      "docs": "Read the docs",
-      "development_environment": "strict",
-      "with_jupyter_lab": "n",
-      "with_pydantic_typing": "y",
-      "command_line_interface": "No command-line interface",
-      "create_author_file": "y",
-      "docstring_style": "NumPy",
-      "open_source_license": "BSD-3-Clause",
-      "_copy_without_render": [
-        "*.github/dependabot.yml",
-        "*.github/release-drafter.yml",
-        "*.github/workflows/release-drafter.yml",
-        "*.github/workflows/test-push-pr.yml",
-        "docs/authors.md",
-        "docs/contributing.md",
-        "docs/history.md",
-        "docs/index.md"
-      ],
-      "_template": "https://github.com/psolsfer/Cookiecutter-PyPackage-Poet/"
-    }
-  },
-  "directory": null
+    "template": "E:\\DEVELOPMENT\\Github\\cookiecutter-pypackage-uv",
+    "commit": "76c79a4b9d87064d15d889adc7a2174b23e24f64",
+    "checkout": null,
+    "context": {
+        "cookiecutter": {
+            "full_name": "Pablo Sol√≠s-Fern√°ndez",
+            "email": "psolsfer@gmail.com",
+            "github_username": "psolsfer",
+            "project_name": "pyauxlib",
+            "project_slug": "pyauxlib",
+            "project_short_description": "Auxiliary library for python.",
+            "pypi_username": "psolsfer",
+            "private_package_repository_name": "",
+            "private_package_repository_url": "",
+            "version": "0.12.0",
+            "python_version": "3.10",
+            "use_pytest": "y",
+            "formatter": "Ruff-format",
+            "docs": "Read the docs",
+            "development_environment": "strict",
+            "with_jupyter_lab": "n",
+            "with_pydantic_typing": "y",
+            "command_line_interface": "No command-line interface",
+            "create_author_file": "y",
+            "docstring_style": "numpy",
+            "open_source_license": "BSD-3-Clause",
+            "_copy_without_render": [
+                "*.github/dependabot.yml",
+                "*.github/release-drafter.yml",
+                "*.github/workflows/release-drafter.yml",
+                "*.github/workflows/test-push-pr.yml",
+                "docs/authors.md",
+                "docs/contributing.md",
+                "docs/history.md",
+                "docs/index.md"
+            ],
+            "_template": "E:\\DEVELOPMENT\\Github\\cookiecutter-pypackage-uv",
+            "_commit": "76c79a4b9d87064d15d889adc7a2174b23e24f64"
+        }
+    },
+    "directory": null
 }

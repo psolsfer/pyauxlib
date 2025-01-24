@@ -1,4 +1,4 @@
-* PyAuxLib version:
+* pyauxlib version:
 * Python version:
 * Operating System:
 
