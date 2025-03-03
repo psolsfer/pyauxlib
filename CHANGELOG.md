@@ -1,3 +1,17 @@
+## v0.12.1 (2025-03-03)
+
+### Feat
+
+- **pyauxlib.utils.dictionaries.py**: add more types to 'remove' in remove_keys
+
+### Fix
+
+- small fixes
+
+### Refactor
+
+- **filesfolders.py**: refactor the iterate_files and iterate_folders and improved their docstrings
+
 ## v0.12.0 (2025-01-23)
 
 ### Feat
