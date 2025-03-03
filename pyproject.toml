@@ -58,7 +58,6 @@ allow-direct-references = true # To allow direct references for dependencies (li
 [tool.uv]
 default-groups = ["dev", "test", "docs"] # SEE https://www.loopwerk.io/articles/2024/python-uv-revisited/
 
-
 [project.optional-dependencies]
 chardet = ["chardet<6.0"]
 

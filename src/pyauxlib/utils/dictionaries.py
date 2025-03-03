@@ -3,7 +3,7 @@
 from typing import Any
 
 
-def remove_keys(dictionary: dict[Any, Any], remove: list[str]) -> dict[Any, Any]:
+def remove_keys(dictionary: dict[Any, Any], remove: str | list[str] | tuple[str]) -> dict[Any, Any]:
     """Remove the keys from a dictionary specified in the list `remove`.
 
     If an element from `remove` is not a key in `dict`, then it will ignore (won't raise
@@ -13,8 +13,8 @@ def remove_keys(dictionary: dict[Any, Any], remove: list[str]) -> dict[Any, Any]
     ----------
     dictionary : dict
         Original dictionary
-    remove : list
-        List with the keys to be removed from `dictionary`
+    remove : str | list[str] | tuple[str]
+        Keys to be removed from `dictionary`
 
     Returns
     -------
@@ -22,6 +22,8 @@ def remove_keys(dictionary: dict[Any, Any], remove: list[str]) -> dict[Any, Any]
         Dictionary with the specified keys removed.
     """
     new_dict = dictionary.copy()
+    if isinstance(remove, str):
+        remove = [remove]
     for k in remove:
         new_dict.pop(k, None)
 
