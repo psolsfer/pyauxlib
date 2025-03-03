@@ -1,0 +1,4 @@
+a = "hola"
+
+b = [a]
+print(b)
