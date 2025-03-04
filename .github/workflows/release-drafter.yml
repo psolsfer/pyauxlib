@@ -2,21 +2,35 @@ name: Release Drafter
 
 on:
   push:
-    # branches to consider in the event; optional, defaults to all
-    branches:
-      - main
-  pull_request:
-    # Only following types are handled by the action, but one can default to all as well
-    types: [opened, reopened, synchronize]
+    tags:
+    - "v*"
+  workflow_dispatch:
+  release:
+    types: [created]
+
+permissions:
+  contents: write
 
 jobs:
-  update_release_draft:
-    permissions:
-        contents: write
-        pull-requests: write
+  draft-release:
+    name: Draft Release Notes
     runs-on: ubuntu-latest
     steps:
-      # Drafts your next Release notes as Pull Requests are merged into "main"
-      - uses: release-drafter/release-drafter@v6
+      - uses: actions/checkout@v4
+      - name: Draft Release Notes
+        uses: release-drafter/release-drafter@v6.1.0
+        with:
+          config-name: release-drafter.yml
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  publish-release:
+    name: Publish GitHub Release
+    needs: draft-release
+    runs-on: ubuntu-latest
+    steps:
+      - name: Publish Release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: >-
+          gh release edit "$GITHUB_REF_NAME" --repo "$GITHUB_REPOSITORY" --draft=false
