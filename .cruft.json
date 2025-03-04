@@ -1,6 +1,6 @@
 {
-    "template": "E:\\DEVELOPMENT\\Github\\cookiecutter-pypackage-uv",
-    "commit": "76c79a4b9d87064d15d889adc7a2174b23e24f64",
+    "template": "https://github.com/psolsfer/cookiecutter-pypackage-uv",
+    "commit": "eb40c136682c8dd6109f761790b857cc63551daf",
     "checkout": null,
     "context": {
         "cookiecutter": {
@@ -13,7 +13,7 @@
             "pypi_username": "psolsfer",
             "private_package_repository_name": "",
             "private_package_repository_url": "",
-            "version": "0.12.0",
+            "version": "0.12.1",
             "python_version": "3.10",
             "use_pytest": "y",
             "formatter": "Ruff-format",
@@ -35,8 +35,8 @@
                 "docs/history.md",
                 "docs/index.md"
             ],
-            "_template": "E:\\DEVELOPMENT\\Github\\cookiecutter-pypackage-uv",
-            "_commit": "76c79a4b9d87064d15d889adc7a2174b23e24f64"
+            "_template": "https://github.com/psolsfer/cookiecutter-pypackage-uv",
+            "_commit": "a4bc2c077049a3255abc90743b70c94f6c6e4b21"
         }
     },
     "directory": null

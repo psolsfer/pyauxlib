@@ -74,7 +74,7 @@ def lint(c: Context, check: bool = True) -> None:
 
 # Tests
 @task(help={"tox_env": "Environment name to run the test"})
-def test(c: Context, tox_env: str = "py311") -> None:
+def test(c: Context, tox_env: str = "py313") -> None:
     """Run tests with tox."""
     _run(c, f"tox -e {tox_env}")
 
