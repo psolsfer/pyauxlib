@@ -7,7 +7,7 @@ from fnmatch import fnmatch
 from pathlib import Path
 from typing import IO, Any, NamedTuple
 
-from pyauxlib.io.utils import clean_file_extension
+from pyauxlib.fileutils.utils import clean_file_extension
 
 logger = logging.getLogger(__name__)
 

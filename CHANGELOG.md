@@ -1,3 +1,10 @@
+## v0.12.2 (2025-03-05)
+
+### Fix
+
+- move io to fileutils
+- **utils.logger**: fix compatibility with py310
+
 ## v0.12.1 (2025-03-03)
 
 ### Feat
