@@ -44,7 +44,7 @@ jobs:
       - name: Run style & type checks
         run: uv run invoke lint
       - name: Build package
-        run: uv build
+        run: uv build --sdist --wheel
       - name: Store the distribution package
         uses: actions/upload-artifact@v4
         with:
