@@ -1,43 +1,43 @@
 {
-    "template": "https://github.com/psolsfer/cookiecutter-pypackage-uv",
-    "commit": "eb40c136682c8dd6109f761790b857cc63551daf",
-    "checkout": null,
-    "context": {
-        "cookiecutter": {
-            "full_name": "Pablo Solís-Fernández",
-            "email": "psolsfer@gmail.com",
-            "github_username": "psolsfer",
-            "project_name": "pyauxlib",
-            "project_slug": "pyauxlib",
-            "project_short_description": "Auxiliary library for python.",
-            "pypi_username": "psolsfer",
-            "private_package_repository_name": "",
-            "private_package_repository_url": "",
-            "version": "0.12.1",
-            "python_version": "3.10",
-            "use_pytest": "y",
-            "formatter": "Ruff-format",
-            "docs": "Read the docs",
-            "development_environment": "strict",
-            "with_jupyter_lab": "n",
-            "with_pydantic_typing": "y",
-            "command_line_interface": "No command-line interface",
-            "create_author_file": "y",
-            "docstring_style": "numpy",
-            "open_source_license": "BSD-3-Clause",
-            "_copy_without_render": [
-                "*.github/dependabot.yml",
-                "*.github/release-drafter.yml",
-                "*.github/workflows/release-drafter.yml",
-                "*.github/workflows/test-push-pr.yml",
-                "docs/authors.md",
-                "docs/contributing.md",
-                "docs/history.md",
-                "docs/index.md"
-            ],
-            "_template": "https://github.com/psolsfer/cookiecutter-pypackage-uv",
-            "_commit": "a4bc2c077049a3255abc90743b70c94f6c6e4b21"
-        }
-    },
-    "directory": null
+  "template": "https://github.com/psolsfer/cookiecutter-pypackage-uv",
+  "commit": "d44e97d35d9a280671cde31c7011791ac0e27e11",
+  "checkout": null,
+  "context": {
+    "cookiecutter": {
+      "full_name": "Pablo Solís-Fernández",
+      "email": "psolsfer@gmail.com",
+      "github_username": "psolsfer",
+      "project_name": "pyauxlib",
+      "project_slug": "pyauxlib",
+      "project_short_description": "Auxiliary library for python.",
+      "pypi_username": "psolsfer",
+      "private_package_repository_name": "",
+      "private_package_repository_url": "",
+      "version": "0.12.1",
+      "python_version": "3.10",
+      "use_pytest": "y",
+      "formatter": "Ruff-format",
+      "docs": "Read the docs",
+      "development_environment": "strict",
+      "with_jupyter_lab": "n",
+      "with_pydantic_typing": "y",
+      "command_line_interface": "No command-line interface",
+      "create_author_file": "y",
+      "docstring_style": "numpy",
+      "open_source_license": "BSD-3-Clause",
+      "_copy_without_render": [
+        "*.github/dependabot.yml",
+        "*.github/release-drafter.yml",
+        "*.github/workflows/release-drafter.yml",
+        "*.github/workflows/test-push-pr.yml",
+        "docs/authors.md",
+        "docs/contributing.md",
+        "docs/history.md",
+        "docs/index.md"
+      ],
+      "_template": "https://github.com/psolsfer/cookiecutter-pypackage-uv",
+      "_commit": "d44e97d35d9a280671cde31c7011791ac0e27e11"
+    }
+  },
+  "directory": null
 }
