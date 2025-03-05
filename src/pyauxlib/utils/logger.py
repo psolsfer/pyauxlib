@@ -3,11 +3,19 @@
 import logging
 import logging.handlers
 import sys
-from datetime import UTC, datetime
+from datetime import datetime
 from pathlib import Path
 from typing import ClassVar
 
 from pyauxlib.io.filesfolders import create_folder
+
+if sys.version_info >= (3, 11):
+    from datetime import UTC
+else:
+    # For Python 3.10
+    from datetime import timezone
+
+    UTC = timezone.utc
 
 
 def _set_level(level: int | str | None, default_level: int | str = "INFO") -> int:
