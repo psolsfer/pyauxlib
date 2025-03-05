@@ -7,7 +7,7 @@ from datetime import datetime
 from pathlib import Path
 from typing import ClassVar
 
-from pyauxlib.io.filesfolders import create_folder
+from pyauxlib.fileutils.filesfolders import create_folder
 
 if sys.version_info >= (3, 11):
     from datetime import UTC
