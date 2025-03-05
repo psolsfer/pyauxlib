@@ -1,6 +1,6 @@
 {
   "template": "https://github.com/psolsfer/cookiecutter-pypackage-uv",
-  "commit": "d44e97d35d9a280671cde31c7011791ac0e27e11",
+  "commit": "47caaa932196d8794a6e3b5d47cbdfac542351fb",
   "checkout": null,
   "context": {
     "cookiecutter": {
@@ -36,7 +36,7 @@
         "docs/index.md"
       ],
       "_template": "https://github.com/psolsfer/cookiecutter-pypackage-uv",
-      "_commit": "d44e97d35d9a280671cde31c7011791ac0e27e11"
+      "_commit": "47caaa932196d8794a6e3b5d47cbdfac542351fb"
     }
   },
   "directory": null
