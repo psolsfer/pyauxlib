@@ -307,3 +307,35 @@ def add_folder_timestamp(rootdir: str | Path, fmt: str = "run_%Y_%m_%d-%H_%M_%S"
     """
     run_id = time.strftime(fmt)
     return Path(rootdir, run_id)
+
+
+def ensure_file_exists(file: Path | str) -> Path:
+    """Ensure that a file exists and is not a directory.
+
+    Parameters
+    ----------
+    file : Path | str
+        Path to the file to validate.
+
+    Returns
+    -------
+    Path
+        The resolved Path object of the existing file.
+
+    Raises
+    ------
+    FileNotFoundError
+        If the specified file does not exist.
+    IsADirectoryError
+        If the specified path is a directory, not a file.
+    """
+    file = Path(file).resolve()
+
+    if file.is_dir():
+        msg = f"Expected a file, but got a directory: {file}"
+        raise IsADirectoryError(msg)
+    if not file.exists():
+        msg = f"File not found: {file}"
+        raise FileNotFoundError(msg)
+
+    return file
