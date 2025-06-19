@@ -186,10 +186,10 @@ class Timer:
         self.add_timestamp("start")
         self.start_time = self.timestamps[-1]
 
-    def stop(self) -> float:
+    def stop(self, filename: str | Path | None = None) -> float:
         """Stop the timer and returns the elapsed time.
 
-        It also saves the timestamps to a file, when provided.
+        It also saves the timestamps to a file, when provided or existing in the Timer class.
         """
         if not hasattr(self, "start_time"):
             self.logger.warning("Timer has not been started.")
@@ -198,7 +198,7 @@ class Timer:
         self.add_timestamp("stop")
         self.stop_time = self.timestamps[-1]
         self.running = False
-        self.save()
+        self.save(filename)
         elapsed_time = self.stop_time - self.start_time
         self.elapsed_time = elapsed_time
 
