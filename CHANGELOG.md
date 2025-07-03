@@ -1,3 +1,10 @@
+## v0.12.6 (2025-07-03)
+
+### Feat
+
+- add parsing of dates
+- **Timer**: stop method of timers now accept filename as argument
+
 ## v0.12.5 (2025-03-12)
 
 ### Feat
