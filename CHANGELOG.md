@@ -1,3 +1,9 @@
+## v0.12.7 (2025-07-08)
+
+### Feat
+
+- add module to determine netcdf availability
+
 ## v0.12.6 (2025-07-03)
 
 ### Feat
