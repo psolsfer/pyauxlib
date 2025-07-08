@@ -1,3 +1,10 @@
+## v0.12.8 (2025-07-08)
+
+### Feat
+
+- add make_compressed_file
+- add get_local_time
+
 ## v0.12.7 (2025-07-08)
 
 ### Feat
