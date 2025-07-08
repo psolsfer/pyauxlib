@@ -2,11 +2,36 @@
 
 from datetime import datetime, timezone
 from typing import Any
+from zoneinfo import ZoneInfo
 
 try:
     from dateutil import parser as date_parser
 except ImportError:
     date_parser = None  # type: ignore[assignment]
+
+try:
+    from tzlocal import get_localzone_name
+except ImportError:
+    get_localzone_name = None  # type: ignore[assignment]
+
+
+def get_local_time() -> datetime:
+    """Get the current local time with timezone information if possible.
+
+    Attempts to use the `tzlocal` package to obtain the system's IANA time zone.
+    If `tzlocal` is unavailable, falls back to naive local time.
+
+    Returns
+    -------
+    datetime.datetime
+        The current datetime object, either timezone-aware (preferred) or naive as fallback.
+    """
+    if get_localzone_name is not None:
+        tz = ZoneInfo(get_localzone_name())
+        return datetime.now(tz)
+
+    # Fallback to naive time
+    return datetime.now()  # noqa: DTZ005
 
 
 def safe_strptime(
