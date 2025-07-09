@@ -7,6 +7,7 @@ from fnmatch import fnmatch
 from pathlib import Path
 from typing import IO, Any, NamedTuple
 
+from pyauxlib.decorators import deprecated_argument
 from pyauxlib.fileutils.utils import clean_file_extension
 
 logger = logging.getLogger(__name__)
@@ -71,11 +72,11 @@ def iterate_files(
         )
 
 
-def iterate_folder(  # noqa: PLR0913
+def _iterate_folder_internal(  # noqa: PLR0913
     folder: str | Path,
     file_extensions: list[str] | None = None,
-    file_patterns: list[str] | None = None,
-    exclude_patterns: bool = False,
+    include_patterns: list[str] | None = None,
+    exclude_patterns: list[str] | None = None,
     subfolders: bool = True,
     parent_path: Path | None = None,
 ) -> Generator[FileRelPath, None, None]:
@@ -92,7 +93,7 @@ def iterate_folder(  # noqa: PLR0913
     file_extensions : list[str], optional
         If provided, only files with these extensions will be included. Extensions are
         case-insensitive.
-    file_patterns : list[str], optional
+    include_patterns : list[str], optional
         Glob patterns for filtering files by name. Files matching any pattern are included.
         Patterns can include wildcards like '*' and '?', to match multiple characters or a single
         character, respectively.
@@ -102,9 +103,8 @@ def iterate_folder(  # noqa: PLR0913
         - ["file_?.txt"]: Files with names like 'file_1.txt', 'file_2.txt', etc.
         - ["file_[0-9].txt"]: Equivalent to the previous example, but uses a character set to match
         any single digit between 0 and 9.
-    exclude_patterns : bool, optional
-        When True, reverses the pattern matching logic to exclude files that match the patterns
-        instead of including them.
+    exclude_patterns : list[str], optional
+        Glob patterns for filter files by name to be excluded.
     subfolders : bool, optional
         When True, performs a recursive search through all subdirectories. Otherwise, only
         searches the immediate folder contents.
@@ -129,9 +129,9 @@ def iterate_folder(  # noqa: PLR0913
         msg = f"The folder '{current_folder}' does not exist."
         raise FileNotFoundError(msg)
 
-    if file_extensions is not None:
-        file_extensions = [clean_file_extension(ext) for ext in file_extensions]
-
+    file_extensions = (
+        [clean_file_extension(ext) for ext in file_extensions] if file_extensions else None
+    )
     parent_path = parent_path or current_folder
 
     files = current_folder.rglob("*") if subfolders else current_folder.glob("*")
@@ -144,13 +144,104 @@ def iterate_folder(  # noqa: PLR0913
             continue
 
         # Check patterns
-        matches_pattern = (
-            any(fnmatch(file.name, pattern) for pattern in file_patterns) if file_patterns else True
-        )
-        if matches_pattern == exclude_patterns:
+        if include_patterns and not any(fnmatch(file.name, pat) for pat in include_patterns):
+            continue
+        if exclude_patterns and any(fnmatch(file.name, pat) for pat in exclude_patterns):
             continue
 
         yield FileRelPath(file=file, rel_path=file.relative_to(parent_path))
+
+
+@deprecated_argument(
+    ["file_patterns"],
+    since="v0.13",
+    additional_msg="Use the new API with 'include_patterns' and 'exclude_patterns'",
+)
+def iterate_folder(  # noqa: PLR0913
+    folder: str | Path,
+    file_extensions: list[str] | None = None,
+    file_patterns: list[str] | None = None,  # DEPRECATED
+    include_patterns: list[str] | None = None,
+    exclude_patterns: bool | list[str] | None = None,
+    subfolders: bool = True,
+    parent_path: Path | None = None,
+) -> Generator[FileRelPath, None, None]:
+    """Yield files from a a folder with flexible filtering options for extensions and patterns.
+
+    Supports both extension-based and pattern-based filtering, with options to include or exclude
+    files matching the specified patterns. Can search recursively through subdirectories if desired.
+
+    Parameters
+    ----------
+    folder : str | Path
+        The starting folder path for the file search. If a file path is provided, searches its
+        parent directory
+    file_extensions : list[str], optional
+        If provided, only files with these extensions will be included. Extensions are
+        case-insensitive.
+    file_patterns : list[str], optional # DEPRECATED
+        Glob patterns for filtering files by name. Files matching any pattern are included.
+        Patterns can include wildcards like '*' and '?', to match multiple characters or a single
+        character, respectively.
+        Pattern examples:
+        - ["*before*"]: Files containing 'before' anywhere in the name.
+        - ["*.txt"]: Files with the '.txt' extension.
+        - ["file_?.txt"]: Files with names like 'file_1.txt', 'file_2.txt', etc.
+        - ["file_[0-9].txt"]: Equivalent to the previous example, but uses a character set to match
+        any single digit between 0 and 9.
+    include_patterns : list[str], optional
+        Glob patterns for filtering files by name. Files matching any pattern are included.
+        Patterns can include wildcards like '*' and '?', to match multiple characters or a single
+        character, respectively.
+        Pattern examples:
+        - ["*before*"]: Files containing 'before' anywhere in the name.
+        - ["*.txt"]: Files with the '.txt' extension.
+        - ["file_?.txt"]: Files with names like 'file_1.txt', 'file_2.txt', etc.
+        - ["file_[0-9].txt"]: Equivalent to the previous example, but uses a character set to match
+        any single digit between 0 and 9.
+    exclude_patterns : bool | list[str], optional
+        Glob patterns for filter files by name to be excluded.
+        'True' is used by file_patterns, to reverse the inclusion to an exclusion. Use of bool
+        is # DEPRECATED.
+    subfolders : bool, optional
+        When True, performs a recursive search through all subdirectories. Otherwise, only
+        searches the immediate folder contents.
+    parent_path : Path, optional
+        Reference path used for calculating relative paths in the results. If None, uses the
+        search starting folder.
+
+    Returns
+    -------
+    Generator[FileRelPath, None, None]
+        A stream of FileRelPath objects, each containing both the absolute path to a matched
+        file and its path relative to parent_path
+
+    Raises
+    ------
+    FileNotFoundError
+        When the specified folder path does not exist in the filesystem.
+    """
+    # Resolve deprecated args
+    include_patterns_resolved = include_patterns
+    exclude_patterns_resolved = exclude_patterns if isinstance(exclude_patterns, list) else None
+
+    # Convert deprecated args if used
+    if file_patterns is not None:
+        if exclude_patterns is True:
+            exclude_patterns_resolved = file_patterns
+            include_patterns_resolved = None
+        else:
+            include_patterns_resolved = file_patterns
+            exclude_patterns_resolved = None
+
+    return _iterate_folder_internal(
+        folder=folder,
+        file_extensions=file_extensions,
+        include_patterns=include_patterns_resolved,
+        exclude_patterns=exclude_patterns_resolved,
+        subfolders=subfolders,
+        parent_path=parent_path,
+    )
 
 
 def open_file(path: Path, mode: str = "w", encoding: str | None = None) -> IO[Any]:
