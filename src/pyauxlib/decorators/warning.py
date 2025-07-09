@@ -172,21 +172,21 @@ def deprecated(*args: Any, **kwargs: Any) -> Any:
 
 
 def deprecated_argument(
-    argument: str = "",
+    arguments: str | list[str],
     since: str = "",
     additional_msg: str = "",
     category: type[Warning] = DeprecationWarning,
 ) -> Any:
-    """Warn of a deprecated argument.
+    """Warn of deprecated arguments.
 
-    Used by decorating the function or method in which the argument is being deprecated.
+    Used by decorating the function or method in which the argument(s) are being deprecated.
 
     Parameters
     ----------
-    argument : str, optional
-        The name of the deprecated argument.
+    arguments : str or list[str]
+        The name(s) of the deprecated argument(s). Can be a single string or a list of strings.
     since : str, optional
-        The version in which the argument will be removed.
+        The version in which the argument(s) will be removed.
     additional_msg : str, optional
         Additional message to be included in the warning, e.g., "Use 'other_arg' instead".
     category : Warning, optional
@@ -199,30 +199,44 @@ def deprecated_argument(
 
     Examples
     --------
-    One deprecated argument:
+    Single deprecated argument:
     ```python
     @deprecated_argument(
-        arguments=["my_arg1"],
+        arguments="my_arg1",
         since="2.0",
         additional_msg="Use 'other_arg' instead")
     def my_func(my_arg1=None, my_arg2=None, other_arg=None):
         pass
     ```
 
-    Multiple arguments can be deprecated by adding multiple decorators:
+    Multiple deprecated arguments:
     ```python
     @deprecated_argument(
-        arguments=["my_arg1"],
+        arguments=["my_arg1", "my_arg2"],
         since="2.0",
-        additional_msg="Use 'other_arg' instead")
-    @deprecated_argument(
-        arguments=["my_arg2"],
-        since="3.0",
-        additional_msg="Use 'yet_another_arg' instead")
+        additional_msg="Use 'other_arg' instead"
+    )
     def my_func(my_arg1=None, my_arg2=None, other_arg=None):
         pass
     ```
+
+    You can also specify different messages for different sets of arguments:
+    ```python
+    @deprecated_argument(
+        arguments=["old_arg1", "old_arg2"],
+        since="2.0",
+        additional_msg="Use 'new_arg' instead"
+    )
+    @deprecated_argument(
+        arguments="legacy_arg",
+        since="3.0",
+        additional_msg="This feature will be removed"
+    )
+    def my_func(old_arg1=None, old_arg2=None, legacy_arg=None, new_arg=None):
+        pass
+    ```
     """
+    arg_list = [arguments] if isinstance(arguments, str) else arguments
 
     @wrapt.decorator
     def wrapper(
@@ -231,7 +245,11 @@ def deprecated_argument(
         args: tuple[Any, ...],
         kwargs: dict[str, Any],
     ) -> Any:
-        if argument in kwargs:
+        # Check for any deprecated arguments in kwargs
+        found_deprecated = [arg for arg in arg_list if arg in kwargs]
+
+        if found_deprecated:
+            # Build the method name for the warning
             module = inspect.getmodule(wrapped)
             if module is not None:
                 module_name = module.__name__
@@ -241,13 +259,26 @@ def deprecated_argument(
                     module_name += "."
             else:
                 module_name = ""
+
             method = module_name + wrapped.__name__
             if instance is not None:
                 method = instance.__class__.__name__ + "." + method
+
+            # Build warning message
             version_str = f" in version {since}" if since else ""
-            additional_msg_str = f" {additional_msg}." if additional_msg else ""
-            msg = f"Argument '{argument}' from '{method}' is being deprecated{version_str}.{additional_msg_str}"
+            add_msg_str = f" {additional_msg}." if additional_msg else ""
+
+            if len(found_deprecated) == 1:
+                arg_str = f"Argument '{found_deprecated[0]}'"
+                number = "is"
+            else:
+                arg_str = f"Arguments {found_deprecated}"
+                number = "are"
+
+            msg = f"{arg_str} from '{method}' {number} being deprecated{version_str}.{add_msg_str}"
+
             warnings.warn(msg, category=category, stacklevel=_routine_stacklevel)
+
         return wrapped(*args, **kwargs)
 
     return wrapper
