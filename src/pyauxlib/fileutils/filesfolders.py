@@ -248,13 +248,15 @@ def clean_filename(filename: str, replacement: str = "_") -> str:
     return filename
 
 
-def generate_unique_filename(file: Path | str) -> Path:
-    """Generate a unique filename by appending numbers if a file with the same name exists.
+def generate_unique_filename(file: Path | str, width: int = 3) -> Path:
+    """Generate a unique filename by appending a zero-padded counter if needed.
 
     Parameters
     ----------
     file : Union[str, Path]
         The original file path.
+    width : int
+        The number of digits to pad the counter with (default is 3).
 
     Returns
     -------
@@ -264,17 +266,17 @@ def generate_unique_filename(file: Path | str) -> Path:
     Examples
     --------
     >>> print(get_unique_filename("/path/to/file.txt")) # doctest: +SKIP
-    /path/to/file_2.txt
+    /path/to/file_001.txt
     """
     counter = 1
     file = Path(file)
+    file_path = file
 
-    while True:
-        new_filename = f"{file.stem}{f'_{counter}' if counter > 1 else ''}{file.suffix}"
-        file_path = Path(file.parent / new_filename)
-        if not file_path.exists():
-            break
+    while file_path.exists():
+        new_filename = f"{file.stem}_{counter:0{width}d}{file.suffix}"
+        file_path = file.parent / new_filename
         counter += 1
+
     return file_path
 
 
