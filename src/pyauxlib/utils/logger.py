@@ -65,7 +65,7 @@ def _set_level(level: int | str | None, default_level: int | str = "INFO") -> in
 
 
 def init_logger(  # noqa: PLR0913
-    name: str,
+    name: str = "",
     level: int | str = "INFO",
     level_console: int | str | None = None,
     level_file: int | str | None = None,
@@ -80,8 +80,12 @@ def init_logger(  # noqa: PLR0913
 
     Parameters
     ----------
-    name : str
-        Name of the logger.
+    name : str, optional
+        Name of the logger. Use "" (default) to configure the root logger.
+        When using non-root loggers, ensure that loggers in other modules fall under the same
+        hierarchy (e.g., use `getLogger("yourapp.module")`).
+        If using a named logger, you may need to set `propagate=True` and ensure child loggers use
+        matching names to inherit handlers and formatting.
     level : int or str, optional
         Overall logging level, by default "INFO".
         Any of the levers of logging can be passed as a string:
@@ -97,6 +101,8 @@ def init_logger(  # noqa: PLR0913
         Maximum size of log files before rotation, by default 1MB.
     propagate : bool, optional
         Whether to propagate logs to parent loggers, by default False.
+        Set to True if you want child loggers to inherit the handlers and formatting from this
+        logger.
     output_console : bool, optional
         Whether to output logs to console, by default True.
     colored_console : bool, optional
@@ -114,6 +120,18 @@ def init_logger(  # noqa: PLR0913
     ------
     ValueError
         If an invalid logging level is provided.
+
+    Example
+    -------------
+    Configure root logger (recommended for most applications):
+
+        logger = init_logger()
+
+    Configure named logger (only if you want isolation):
+
+        logger = init_logger(name="myapp", propagate=True)
+        child_logger = logging.getLogger("myapp.module")
+        child_logger.info("This will use myapp's handlers")
     """
     logger = logging.getLogger(name)
     try:
@@ -180,5 +198,10 @@ def init_logger(  # noqa: PLR0913
         else:
             console_handler.setFormatter(formatter)
         logger.addHandler(console_handler)
+
+    if name and not propagate:
+        msg = f"Logger '{name}' is configured with propagate=False. \
+            Child loggers will not inherit this configuration."
+        logger.warning(msg)
 
     return logger
