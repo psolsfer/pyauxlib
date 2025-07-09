@@ -1,3 +1,16 @@
+## v0.13.0 (2025-07-09)
+
+### Feat
+
+- improve pattern filtering of iterate_folder
+- deprecated_argument now accepts several arguments at once
+- add zero-pad counter to generate_unique_filename
+- make init_logger default to root logger and warn on non-propagating named loggers (#43)
+
+### Refactor
+
+- make optional import mypy-friendly
+
 ## v0.12.8 (2025-07-08)
 
 ### Feat
