@@ -1,5 +1,6 @@
 """Functions related to dates and times."""
 
+from collections.abc import Callable
 from datetime import datetime, timezone
 from typing import Any
 from zoneinfo import ZoneInfo
@@ -10,9 +11,11 @@ except ImportError:
     date_parser = None  # type: ignore[assignment]
 
 try:
-    from tzlocal import get_localzone_name
+    from tzlocal import get_localzone_name as _get_localzone_name
 except ImportError:
-    get_localzone_name = None  # type: ignore[assignment]
+    _get_localzone_name = None  # type: ignore[assignment]
+
+get_localzone_name: Callable[[], str] | None = _get_localzone_name
 
 
 def get_local_time() -> datetime:
