@@ -61,7 +61,7 @@ default-groups = ["dev", "test", "docs"] # SEE https://www.loopwerk.io/articles/
 
 [project.optional-dependencies]
 chardet = ["chardet<6.0"]
-dates = ["python-dateutil"]
+dates = ["python-dateutil", "types-python-dateutil"]
 times = ["tzlocal"]
 
 [dependency-groups] # https://docs.astral.sh/uv/concepts/projects/dependencies/#dependency-groups
