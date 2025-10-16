@@ -11,6 +11,7 @@ from codecs import (
     BOM_UTF32_LE,
 )
 from pathlib import Path
+from typing import TypeAlias
 
 try:
     import chardet
@@ -20,16 +21,45 @@ except ImportError:
     chardet = None  # type: ignore[assignment]
     HAS_CHARDET = False
 
+
 logger = logging.getLogger(__name__)
 
+FileOrBytes: TypeAlias = str | Path | bytes | bytearray
 
-def detect_encoding(file: str | Path) -> str | None:
-    """Detect the encoding of a file by reading the first bytes.
+
+def _to_bytes(file: FileOrBytes) -> bytes | None:
+    """Convert input to bytes, handling both file paths and byte sequences.
 
     Parameters
     ----------
-    file : str | Path
-        file to be checked
+    file : str | Path | bytes | bytearray
+        File path or byte sequence
+
+    Returns
+    -------
+    bytes | None
+        Byte content, or None if file not found
+    """
+    if isinstance(file, bytes | bytearray):
+        return bytes(file)
+
+    # Handle file paths
+    file_path = Path(file)
+    try:
+        with Path.open(file_path, "rb") as f:
+            return f.read()
+    except FileNotFoundError as err:
+        logger.warning("Error %s loading file: %s", err, file_path)
+        return None
+
+
+def detect_encoding(file: FileOrBytes) -> str | None:
+    """Detect the encoding of a file or byte sequence by reading the first bytes.
+
+    Parameters
+    ----------
+    file : str | Path | bytes | bytearray
+        File path to be checked, or a byte sequence to analyze.
 
     Returns
     -------
@@ -46,25 +76,26 @@ def detect_encoding(file: str | Path) -> str | None:
         BOM_UTF32_LE: "utf_32_le",
         b"": "utf-8",
     }
-    file_path = Path(file)
-    try:
-        with Path.open(file_path, "rb") as f:
-            first_chars = f.read(max(len(bom) for bom in codecs))
-            for bom, encoding in codecs.items():
-                if first_chars.startswith(bom):
-                    return encoding
-    except FileNotFoundError as err:
-        logger.warning("Error %s loading file: %s", err, file_path)
-        return None
-    else:
-        # If no BOM is detected, try chardet if available
-        if HAS_CHARDET:
-            return detect_encoding_chardet(file_path)
+
+    # Convert to bytes
+    data = _to_bytes(file)
+    if data is None:
         return None
 
+    # Check for BOM
+    first_chars = data[: max(len(bom) for bom in codecs)]
+    for bom, encoding in codecs.items():
+        if first_chars.startswith(bom):
+            return encoding
 
-def detect_encoding_chardet(file: str | Path) -> str | None:
-    """Detect the encoding of a file using the chardet library.
+    # If no BOM is detected, try chardet if available
+    if HAS_CHARDET:
+        return detect_encoding_chardet(data)
+    return None
+
+
+def detect_encoding_chardet(file: FileOrBytes) -> str | None:
+    """Detect the encoding of a file or byte sequence using the chardet library.
 
     This function uses the chardet library to guess the encoding of a file based on heuristics.
     Note that this method may not always be accurate and can be slow for large files. It is
@@ -72,8 +103,8 @@ def detect_encoding_chardet(file: str | Path) -> str | None:
 
     Parameters
     ----------
-    file : str | Path
-        The path of the file for which to detect the encoding.
+    file : str | Path | bytes | bytearray
+        File path to be checked, or a byte sequence to analyze.
 
     Returns
     -------
@@ -83,26 +114,34 @@ def detect_encoding_chardet(file: str | Path) -> str | None:
     Raises
     ------
     FileNotFoundError
-        If the specified file does not exist.
+        If the specified file does not exist (when a path is provided).
     AttributeError
         If the chardet library is not installed.
 
     Examples
     --------
     ```python
+    # From file path
     encoding = detect_encoding_chardet("/path/to/file.txt")
     print(encoding)
     # Output: 'utf-8'
+
+    # From byte sequence
+    data = b"Hello, world!"
+    encoding = detect_encoding_chardet(data)
+    print(encoding)
+    # Output: 'ascii'
     ```
     """
     if chardet is None:
         logger.warning("Install package 'chardet' for additional encoding detection.")  # type: ignore[unreachable]
         return None
-    file = Path(file) if isinstance(file, str) else file
-    try:
-        with Path.open(file, "rb") as f:
-            result = chardet.detect(f.read())
-            return result["encoding"]
-    except FileNotFoundError:
-        logger.warning("Error %s loading file", file)
+
+    # Convert to bytes
+    data = _to_bytes(file)
+    if data is None:
         return None
+
+    # Detect encoding
+    result = chardet.detect(data)
+    return result["encoding"]
