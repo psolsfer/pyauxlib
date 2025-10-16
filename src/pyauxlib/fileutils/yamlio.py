@@ -4,7 +4,7 @@ import io
 import logging
 from pathlib import Path
 from types import UnionType
-from typing import Any, Literal, Union, get_args, get_origin
+from typing import Any, Literal, Union, cast, get_args, get_origin
 
 from pydantic import BaseModel
 from pydantic_core import PydanticUndefined
@@ -78,6 +78,9 @@ def generate_yaml_template(model: type[BaseModel]) -> str:  # noqa: C901
     ...     field_literal: Literal["Literals", "also", "Work"] = Field(
     ...         "Literals", description="This is a literal"
     ...     )
+    ...     field_list: list[int] = Field([1, 2, 3], description="This is a list")
+    ...     field_dict: dict[str, Any] = Field({"a":1, "b":2}, description="This is a dict")
+
     >>> yaml_template = generate_yaml_template(MyModel)
     >>> print(yaml_template)  # doctest: +NORMALIZE_WHITESPACE
     field1:  # [str] Description for field1
@@ -87,6 +90,13 @@ def generate_yaml_template(model: type[BaseModel]) -> str:  # noqa: C901
         testing:  # [str] Nested models...
         testing2: # [str] ... work
     field_literal: Literals # [Literals, also, Work] This is a literal
+    field_list: # [list[int]] This is a list
+      - 1
+      - 2
+      - 3
+    field_dict: # [dict[str, Any]] This is a dict
+        a: 1
+        b: 2
     <BLANKLINE>
     """
     yaml = YAML()
@@ -110,7 +120,8 @@ def generate_yaml_template(model: type[BaseModel]) -> str:  # noqa: C901
             if name[0] == "_":
                 continue
 
-            origin = get_origin(field)
+            origin = cast("Any", get_origin(field))  # Cast to Any to fix mypy overload resolution
+
             if origin == Union:
                 field_types = []
                 for arg in get_args(field):

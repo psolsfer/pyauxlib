@@ -108,7 +108,7 @@ def require(*dependencies: str, raise_error: bool = True) -> Callable[[F], F]:
             return None
         return wrapped(*args, **kwargs)
 
-    return cast(Callable[[F], F], wrapper)
+    return cast("Callable[[F], F]", wrapper)
 
 
 @deprecated(reason="Use 'require' instead", since="0.11", removed="0.12", action="always")
