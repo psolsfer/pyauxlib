@@ -76,6 +76,7 @@ def require(*dependencies: str, raise_error: bool = True) -> Callable[[F], F]:
     >>> @require("numpy")
     ... def calculate_mean(data):
     ...     import numpy as np
+    ...
     ...     return np.mean(data)
 
     >>> @require("sklearn", "yellowbrick", raise_error=False)

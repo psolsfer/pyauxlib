@@ -356,7 +356,7 @@ def generate_unique_filename(file: Path | str, width: int = 3) -> Path:
 
     Examples
     --------
-    >>> print(get_unique_filename("/path/to/file.txt")) # doctest: +SKIP
+    >>> print(get_unique_filename("/path/to/file.txt"))  # doctest: +SKIP
     /path/to/file_001.txt
     """
     counter = 1

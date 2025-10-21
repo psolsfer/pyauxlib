@@ -1,14 +1,11 @@
 # Page configuration for 'mkdocs-awesome-pages-plugin'
-# IMPORTANT: Rememeber to add all files that doesn't have to be rendered by the template
-# to "_copy_without_render" in cookiecutter.json
 nav:
-    - Home:
-          - index.md
-          - Getting started:
-                - Installation: installation.md
-                - Usage: usage.md
-          - Modules: modules.md
-    - FAQ: faq.md
-    - Troubleshooting: troubleshooting.md
-    - Contributing: contributing.md
-    - History: history.md
+  - Home: index.md
+  - Getting Started: getting-started
+  - Tutorials: tutorials
+  - Examples: examples
+  - User Guides: guides
+  - Concepts: concepts
+  - Advanced Topics: advanced
+  - API Reference: api
+  - Community: community

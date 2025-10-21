@@ -49,15 +49,15 @@ def is_empty_or_none(dictionary: dict[Any, Any]) -> bool:
     Examples
     --------
     ```python
-    nested_dict = {'a': {'b': None, 'c': {}}}
+    nested_dict = {"a": {"b": None, "c": {}}}
     print(is_empty_or_none(nested_dict))
     # Output: True
 
-    nested_dict = {'a': {'b': None, 'c': {'d': None}}}
+    nested_dict = {"a": {"b": None, "c": {"d": None}}}
     print(is_empty_or_none(nested_dict))
     # Output: True
 
-    nested_dict = {'a': {'b': 0, 'c': {'d': None}}}
+    nested_dict = {"a": {"b": 0, "c": {"d": None}}}
     print(is_empty_or_none(nested_dict))
     # Output: False
     ```

@@ -115,10 +115,10 @@ def experimental(*args: Any, **kwargs: Any) -> Any:
     def function(a, b):
         return [a, b]
 
-    @experimental(reason="use another function",
-        since="1.2.0",
-        category=FutureWarning,
-        action="error")
+
+    @experimental(
+        reason="use another function", since="1.2.0", category=FutureWarning, action="error"
+    )
     def function(a, b):
         return [a, b]
     ```
@@ -201,10 +201,7 @@ def deprecated_argument(
     --------
     Single deprecated argument:
     ```python
-    @deprecated_argument(
-        arguments="my_arg1",
-        since="2.0",
-        additional_msg="Use 'other_arg' instead")
+    @deprecated_argument(arguments="my_arg1", since="2.0", additional_msg="Use 'other_arg' instead")
     def my_func(my_arg1=None, my_arg2=None, other_arg=None):
         pass
     ```
@@ -212,9 +209,7 @@ def deprecated_argument(
     Multiple deprecated arguments:
     ```python
     @deprecated_argument(
-        arguments=["my_arg1", "my_arg2"],
-        since="2.0",
-        additional_msg="Use 'other_arg' instead"
+        arguments=["my_arg1", "my_arg2"], since="2.0", additional_msg="Use 'other_arg' instead"
     )
     def my_func(my_arg1=None, my_arg2=None, other_arg=None):
         pass
@@ -223,14 +218,10 @@ def deprecated_argument(
     You can also specify different messages for different sets of arguments:
     ```python
     @deprecated_argument(
-        arguments=["old_arg1", "old_arg2"],
-        since="2.0",
-        additional_msg="Use 'new_arg' instead"
+        arguments=["old_arg1", "old_arg2"], since="2.0", additional_msg="Use 'new_arg' instead"
     )
     @deprecated_argument(
-        arguments="legacy_arg",
-        since="3.0",
-        additional_msg="This feature will be removed"
+        arguments="legacy_arg", since="3.0", additional_msg="This feature will be removed"
     )
     def my_func(old_arg1=None, old_arg2=None, legacy_arg=None, new_arg=None):
         pass

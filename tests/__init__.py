@@ -1,1 +1,1 @@
-"""Unit test package for pyauxlib."""
+"""Tests for pyauxlib."""

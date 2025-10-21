@@ -25,7 +25,7 @@ class FileGroup:
         Examples
         --------
         >>> files = FileGroup(Path("docs"), "report", ".pdf")
-        >>> files.get() # doctest: +SKIP
+        >>> files.get()  # doctest: +SKIP
         Path("docs/report.pdf")
         >>> files.get("_draft")  # doctest: +SKIP
         Path("docs/report_draft.pdf")
@@ -59,11 +59,11 @@ class FileGroup:
         Examples
         --------
         >>> fg = FileGroup(Path("data"), "users", ".csv")
-        >>> fg.get() # doctest: +SKIP
+        >>> fg.get()  # doctest: +SKIP
         Path("data/users.csv")
-        >>> fg.get("_2023") # doctest: +SKIP
+        >>> fg.get("_2023")  # doctest: +SKIP
         Path("data/users_2023.csv")
-        >>> fg.get("_backup") # doctest: +SKIP
+        >>> fg.get("_backup")  # doctest: +SKIP
         Path("data/users_backup.csv")
         """
         name = f"{self.base}{append}{self.suffix}"

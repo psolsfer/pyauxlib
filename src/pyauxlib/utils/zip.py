@@ -21,7 +21,7 @@ def yield_files_from_zip(zip_path: str) -> Generator[tuple[Path, IO[bytes]], Non
 
     Examples
     --------
-    >>> for path, file in yield_files_from_zip("example.zip"): # doctest: +SKIP
+    >>> for path, file in yield_files_from_zip("example.zip"):  # doctest: +SKIP
     ...     print(path, file)
     """
     with zipfile.ZipFile(zip_path, "r") as zip_file:

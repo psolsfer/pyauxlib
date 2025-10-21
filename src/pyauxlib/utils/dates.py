@@ -2,18 +2,23 @@
 
 from collections.abc import Callable
 from datetime import datetime, timezone
-from typing import Any
+from typing import TYPE_CHECKING, Any
 from zoneinfo import ZoneInfo
 
-try:
+if TYPE_CHECKING:
     from dateutil import parser as date_parser
-except ImportError:
-    date_parser = None  # type: ignore[assignment]
-
-try:
     from tzlocal import get_localzone_name as _get_localzone_name
-except ImportError:
-    _get_localzone_name = None  # type: ignore[assignment]
+
+else:
+    try:
+        from tzlocal import get_localzone_name as _get_localzone_name
+    except ImportError:
+        _get_localzone_name = None
+
+    try:
+        from dateutil import parser as date_parser
+    except ImportError:
+        date_parser = None
 
 get_localzone_name: Callable[[], str] | None = _get_localzone_name
 
