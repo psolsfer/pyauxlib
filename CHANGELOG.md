@@ -1,3 +1,9 @@
+## v0.14.0 (2025-10-21)
+
+### Feat
+
+- **encoding**: allow detect_encoding to accept byte sequences
+
 ## v0.13.0 (2025-07-09)
 
 ### Feat
