@@ -1,0 +1,30 @@
+# Changes here will be overwritten by Copier; NEVER EDIT MANUALLY.
+_commit: v0.2.0-4-gde714e4
+_src_path: https://github.com/psolsfer/uvcopier
+command_line_interface: No CLI
+create_author_file: true
+development_environment: strict
+docs: Read the docs
+docstring_style: numpy
+email: psolsfer@gmail.com
+formatter: Ruff-format
+full_name: Pablo Solís-Fernández
+github_username: psolsfer
+hooks_tool: prek
+open_source_license: BSD-3-Clause
+package_command_line_name: pyauxlib
+package_distribution_name: pyauxlib
+package_import_name: pyauxlib
+private_package_repository_name: ''
+project_name: pyauxlib
+project_short_description: Auxiliary library for python.
+pypi_username: psolsfer
+python_version: '3.10'
+repository_name: pyauxlib
+repository_namespace: psolsfer
+repository_provider: github.com
+use_pytest: true
+version: 0.13.0
+with_jupyter_lab: false
+with_pydantic_typing: true
+

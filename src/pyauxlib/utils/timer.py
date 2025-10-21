@@ -4,6 +4,7 @@ import contextlib
 import csv
 import io
 import logging
+import sys
 import time
 from collections.abc import Callable
 from pathlib import Path
@@ -11,9 +12,9 @@ from typing import Any, ClassVar, Literal, Protocol
 
 import wrapt
 
-try:
-    from typing import Self  # Only works from Python 3.11
-except ImportError:
+if sys.version_info >= (3, 11):
+    from typing import Self
+else:
     from typing_extensions import Self
 
 
