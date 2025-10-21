@@ -1,11 +1,12 @@
 """Basic memory tracker."""
 
+import sys
 import tracemalloc
 from tracemalloc import Snapshot, StatisticDiff
 
-try:
-    from typing import Self  # Only works from Python 3.11
-except ImportError:
+if sys.version_info >= (3, 11):
+    from typing import Self
+else:
     from typing_extensions import Self
 
 

@@ -1,7 +1,5 @@
 # Installation
 
-----
-
 ## Using Package Managers
 
 To install pyauxlib in your project, choose your preferred package manager:
@@ -16,7 +14,7 @@ To install pyauxlib in your project, choose your preferred package manager:
 
 === ":simple-uv: uv (recommended for new projects)"
 
-    First, install [uv] if you haven't already (for more detailed instructions refer to [uv installation]):
+    First, install [uv] if you haven't already (for more detailed instructions refer to [uv installation] in the official documentation):
 
     ```bash linenums="0"
     # Windows (PowerShell)
@@ -32,17 +30,16 @@ To install pyauxlib in your project, choose your preferred package manager:
     # Create project directory
     mkdir myproject && cd myproject
 
-    # Initialize project with Python 3.12
-    uv venv
-    uv python install 3.12
+    # Initialize project with Python 3.10
+    uv init --python 3.10
 
     # Install pyauxlib
-    uv pip install pyauxlib
+    uv add pyauxlib
     ```
 
 === ":simple-poetry: Poetry"
-    First, install [Poetry] if you haven't already (for more detailed instructions refer to [Poetry installation]):
 
+    First, install [Poetry] if you haven't already (for more detailed instructions refer to [Poetry installation] in the official documentation):
 
     Then create and initialize a new project:
 
@@ -52,7 +49,7 @@ To install pyauxlib in your project, choose your preferred package manager:
     cd myproject
 
     # Set Python version
-    poetry env use 3.12
+    poetry env use 3.10
 
     # Install pyauxlib
     poetry add pyauxlib
@@ -60,25 +57,21 @@ To install pyauxlib in your project, choose your preferred package manager:
 
 ## Development Installation
 
-To install pyauxlib for development, you clone the public repository in the [Github repo]:
+To install pyauxlib for development:
 
 ```bash linenums="0"
-git clone git://github.com/psolsfer/pyauxlib
-```
-
-Once you have a copy of the source, you can install it with:
-
-```bash linenums="0"
+git clone https://github.com/psolsfer/pyauxlib.git
 cd pyauxlib
 uv sync
 ```
 
 This command installs all dependencies as specified in `pyproject.toml` and also creates a virtual environment if one doesn't exist.
 
-[Github repo]: <https://github.com/psolsfer/pyauxlib>
-[pip]: <https://pip.pypa.io/en/stable/>
-[pip guide]: <https://pip.pypa.io/en/stable/getting-started/>
-[Poetry]: <https://python-poetry.org/>
-[Poetry installation]: <https://python-poetry.org/docs/#installation>
-[uv]: <https://docs.astral.sh/uv/>
-[uv installation]: <https://docs.astral.sh/uv/getting-started/installation/#installation-methods>
+[GitHub repo]: https://github.com/psolsfer/pyauxlib
+
+[pip]: https://pip.pypa.io/en/stable/
+[pip guide]: https://pip.pypa.io/en/stable/getting-started/
+[Poetry]: https://python-poetry.org/
+[Poetry installation]: https://python-poetry.org/docs/#installation
+[uv]: https://docs.astral.sh/uv/
+[uv installation]: https://docs.astral.sh/uv/getting-started/installation/#installation-methods

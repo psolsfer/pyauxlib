@@ -79,7 +79,7 @@ def generate_yaml_template(model: type[BaseModel]) -> str:  # noqa: C901
     ...         "Literals", description="This is a literal"
     ...     )
     ...     field_list: list[int] = Field([1, 2, 3], description="This is a list")
-    ...     field_dict: dict[str, Any] = Field({"a":1, "b":2}, description="This is a dict")
+    ...     field_dict: dict[str, Any] = Field({"a": 1, "b": 2}, description="This is a dict")
 
     >>> yaml_template = generate_yaml_template(MyModel)
     >>> print(yaml_template)  # doctest: +NORMALIZE_WHITESPACE
