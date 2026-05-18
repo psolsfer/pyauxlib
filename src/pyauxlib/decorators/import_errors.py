@@ -1,6 +1,6 @@
 """Decorators for handling imports."""
 
-import importlib
+import importlib.util
 import logging
 from collections.abc import Callable
 from typing import Any, TypeVar, cast
