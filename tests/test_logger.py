@@ -27,7 +27,7 @@ def test_set_level() -> None:
     assert _set_level(None, default_level="ERROR") == logging.ERROR
 
     with pytest.raises(
-        ValueError, match=re.escape("Invalid logging level: INVALID_LEVEL. Valid levels are:")
+        ValueError, match=re.escape("Invalid logging level: 'INVALID_LEVEL'. Valid levels are:")
     ):
         _set_level("INVALID_LEVEL")
 
@@ -38,9 +38,8 @@ def test_set_level() -> None:
 def test_init_logger() -> None:
     """Test the init_logger function with different configurations.
 
-    This test verifies that the init_logger function correctly
-    sets up loggers with various configurations, including
-    different log levels and output options.
+    This test verifies that the init_logger function correctly sets up loggers with various
+    configurations, including different log levels and output options.
     """
     # Test without output file
     logger = init_logger("test_logger", "DEBUG")
