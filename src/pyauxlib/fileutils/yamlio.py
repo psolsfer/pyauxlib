@@ -6,11 +6,18 @@ from pathlib import Path
 from types import UnionType
 from typing import Any, Literal, Union, cast, get_args, get_origin
 
-from pydantic import BaseModel
-from pydantic_core import PydanticUndefined
-from ruamel.yaml import YAML
-from ruamel.yaml.comments import CommentedMap
-from ruamel.yaml.error import YAMLError
+try:
+    from pydantic import BaseModel
+    from pydantic_core import PydanticUndefined
+    from ruamel.yaml import YAML
+    from ruamel.yaml.comments import CommentedMap
+    from ruamel.yaml.error import YAMLError
+except ImportError as e:
+    msg = (
+        "The 'yaml' extra is required to use this module. "
+        "Install it with: pip install pyauxlib[yaml]"
+    )
+    raise ImportError(msg) from e
 
 logger = logging.getLogger(__name__)
 

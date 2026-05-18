@@ -4,7 +4,7 @@ import logging
 from collections.abc import Callable
 from typing import Any
 
-import wrapt
+from pyauxlib._compat import wrapt
 
 
 def log(logger: logging.Logger, message: str, ending: bool = False) -> Any:

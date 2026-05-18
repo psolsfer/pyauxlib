@@ -10,7 +10,7 @@ from collections.abc import Callable
 from pathlib import Path
 from typing import Any, ClassVar, Literal, Protocol
 
-import wrapt
+from pyauxlib._compat import wrapt
 
 if sys.version_info >= (3, 11):
     from typing import Self

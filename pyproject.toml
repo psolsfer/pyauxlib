@@ -32,11 +32,7 @@ classifiers = [
     "Typing :: Typed",
 ]
 requires-python = ">=3.10,<3.15"
-dependencies = [
-    "pydantic>=2.4.0",
-    "ruamel-yaml<1.0",
-    "wrapt>=1.15",
-]
+dependencies = []
 
 [project.urls]
 Homepage = "https://github.com/psolsfer/pyauxlib"
@@ -47,8 +43,18 @@ Issues = "https://github.com/psolsfer/pyauxlib/issues"
 [project.optional-dependencies]
 chardet = ["chardet<6.0"]
 dates = ["python-dateutil", "types-python-dateutil"]
+decorators = ["wrapt>=1.15"]
 times = ["tzlocal"]
-all = ["chardet<6.0", "python-dateutil", "types-python-dateutil", "tzlocal"]
+yaml = ["pydantic>=2.4.0", "ruamel-yaml<1.0"]
+all = [
+    "chardet<6.0",
+    "pydantic>=2.4.0",
+    "python-dateutil",
+    "ruamel-yaml<1.0",
+    "types-python-dateutil",
+    "tzlocal",
+    "wrapt>=1.15",
+    ]
 
 [tool.uv]
 default-groups = ["dev", "test", "docs"]

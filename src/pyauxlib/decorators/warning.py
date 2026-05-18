@@ -5,7 +5,7 @@ import warnings
 from collections.abc import Callable
 from typing import Any
 
-import wrapt
+from pyauxlib._compat import wrapt
 
 _routine_stacklevel = 2
 

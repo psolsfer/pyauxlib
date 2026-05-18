@@ -5,8 +5,7 @@ import logging
 from collections.abc import Callable
 from typing import Any, TypeVar, cast
 
-import wrapt
-
+from pyauxlib._compat import wrapt
 from pyauxlib.decorators.warning import deprecated
 
 logger = logging.getLogger(__name__)
