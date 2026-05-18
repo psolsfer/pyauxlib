@@ -1,6 +1,7 @@
 """Test for the logger."""
 
 import logging
+import logging.handlers
 import re
 import shutil
 from collections.abc import Generator
