@@ -54,18 +54,17 @@ repos:
 
   - repo: local
     hooks:
-        - id: mypy
-          name: mypy
-          entry: tox -e type
-          language: system
-          pass_filenames: false
+      - id: mypy
+        name: mypy
+        entry: tox -e type
+        language: system
+        pass_filenames: false
+        types: [python]
 
   - repo: https://github.com/pypa/pip-audit
     rev: v2.10.0
     hooks:
       - id: pip-audit
-        args: [--ignore-vuln=GHSA-4xh5-x5gv-qwph]
-
 
   - repo: local
     hooks:

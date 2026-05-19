@@ -1,5 +1,5 @@
 # Changes here will be overwritten by Copier; NEVER EDIT MANUALLY.
-_commit: v0.3.0
+_commit: v0.5.0-1-g5192270
 _src_path: https://github.com/psolsfer/uvcopier
 command_line_interface: No CLI
 create_author_file: true
@@ -24,7 +24,7 @@ repository_name: pyauxlib
 repository_namespace: psolsfer
 repository_provider: github.com
 use_pytest: true
-version: 0.13.0
-with_jupyter_lab: false
-with_pydantic_typing: true
+version: 0.15.1
+with_jupyter: No Jupyter
+with_pydantic_typing: false
 
