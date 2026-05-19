@@ -5,4 +5,4 @@ Auxiliary library for python.
 
 __author__ = """Pablo Solís-Fernández"""
 __email__ = "psolsfer@gmail.com"
-__version__ = "0.15.1"
+__version__ = "0.16.0"
