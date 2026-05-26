@@ -77,7 +77,7 @@ class TypoSymbol(Symbol):
     QUOTE_RIGHT = "’"  # \u2019
 
 
-class MathSymbol(StrEnum):
+class MathSymbol(Symbol):
     """Mathematical operators and relations."""
 
     MINUS = "−"  # \u2212
@@ -90,7 +90,7 @@ class MathSymbol(StrEnum):
     PROPORTIONAL_TO = "∝"  # \u221d
 
 
-class ArrowSymbol(StrEnum):
+class ArrowSymbol(Symbol):
     """Arrows and directional indicators."""
 
     RIGHT = "→"  # \u2192
@@ -99,13 +99,13 @@ class ArrowSymbol(StrEnum):
     POINTER_RIGHT = "☞"  # \u261e
 
 
-class GreekSymbol(StrEnum):
+class GreekSymbol(Symbol):
     """Greek letters."""
 
     SIGMA = "σ"  # \u03c3
 
 
-class IconSymbol(StrEnum):
+class IconSymbol(Symbol):
     """Emoji and icon symbols."""
 
     LIGHT_BULB = "💡"  # \U0001f4a1
