@@ -1,3 +1,9 @@
+## v0.16.2 (2026-05-26)
+
+### Fix
+
+- fix inheritance in symbols module
+
 ## v0.16.1 (2026-05-26)
 
 ### Feat
