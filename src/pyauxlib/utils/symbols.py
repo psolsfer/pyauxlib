@@ -102,6 +102,7 @@ class ArrowSymbol(Symbol):
 class GreekSymbol(Symbol):
     """Greek letters."""
 
+    MU = "μ"  # \u03bc
     SIGMA = "σ"  # \u03c3
 
 
