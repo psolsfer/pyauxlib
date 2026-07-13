@@ -110,3 +110,5 @@ class IconSymbol(Symbol):
     """Emoji and icon symbols."""
 
     LIGHT_BULB = "💡"  # \U0001f4a1
+    FILE_FOLDER = "📂"  # \U0001F4C2
+    FLOPPY = "💾"  # \U0001f4be
