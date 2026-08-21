@@ -1,3 +1,11 @@
+## v0.16.4 (2026-08-21)
+
+### Feat
+
+- improve clean_filename behavior
+- add icon symbols
+- add mu greek letter symbol
+
 ## v0.16.3 (2026-07-02)
 
 ## v0.16.2 (2026-05-26)
