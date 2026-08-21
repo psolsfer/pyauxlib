@@ -320,7 +320,7 @@ def create_folder(path: Path, includes_file: bool = False) -> bool:
 def clean_filename(
     filename: str,
     replacement: str = "_",
-    illegal_characters: str = "!@#$%^&*()[]{};:,/<>?'\\'|`~-=_+",
+    illegal_characters: str = "!@#$%^&*()[]{};:,/<>?'\\'|`~=+",
 ) -> str:
     """Remove illegal characters from a filename.
 
