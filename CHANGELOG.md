@@ -1,3 +1,9 @@
+## v0.16.5 (2026-08-21)
+
+### Fix
+
+- fix alloed characters in clean_filename
+
 ## v0.16.4 (2026-08-21)
 
 ### Feat
