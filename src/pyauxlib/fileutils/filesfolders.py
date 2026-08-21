@@ -74,6 +74,7 @@ def iterate_files(
 
 def _iterate_folder_internal(  # noqa: PLR0913
     folder: str | Path,
+    *,
     file_extensions: list[str] | None = None,
     include_patterns: list[str] | None = None,
     exclude_patterns: list[str] | None = None,
@@ -159,6 +160,7 @@ def _iterate_folder_internal(  # noqa: PLR0913
 )
 def iterate_folder(  # noqa: PLR0913
     folder: str | Path,
+    *,
     file_extensions: list[str] | None = None,
     file_patterns: list[str] | None = None,  # DEPRECATED
     include_patterns: list[str] | None = None,
@@ -315,28 +317,51 @@ def create_folder(path: Path, includes_file: bool = False) -> bool:
         return True
 
 
-def clean_filename(filename: str, replacement: str = "_") -> str:
+def clean_filename(
+    filename: str,
+    replacement: str = "_",
+    illegal_characters: str = "!@#$%^&*()[]{};:,/<>?'\\'|`~-=_+",
+) -> str:
     """Remove illegal characters from a filename.
 
     Parameters
     ----------
     filename : str
         name of the file
-
-    replacement : str
-        character to replace the illegal characters
+    replacement : str, optional
+        Character used to replace illegal characters. Must not itself be an illegal character.
+    illegal_characters : str, optional
+        Characters to replace. Additional characters can be supplied, for example ``" "`` to also
+        replace spaces.
 
     Returns
     -------
     str
-        clean name
+        Cleaned filename.
+
+    Raises
+    ------
+    ValueError
+        If ``replacement`` is an illegal character.
+
+    Examples
+    --------
+    >>> clean_filename("Map 1 / point 2", illegal_characters=" /")
+    'Map_1___point_2'
+
+    >>> clean_filename("Map 1 / point 2", illegal_characters=" /", replacement="-")
+    'Map-1---point-2'
     """
-    illegal_characters = "!@#$%^&*()[]{};:,/<>?'\\'|`~-=_+"
+    if len(replacement) != 1:
+        msg = "replacement must be exactly one character"
+        raise ValueError(msg)
+    if replacement in illegal_characters:
+        msg = f"replacement {replacement!r} must not be an illegal character"
+        raise ValueError(msg)
 
-    replacement = "_" if replacement in illegal_characters else replacement
+    translation_table = str.maketrans(dict.fromkeys(illegal_characters, replacement))
 
-    filename = filename.translate({ord(c): replacement for c in illegal_characters})
-    return filename
+    return filename.translate(translation_table)
 
 
 def generate_unique_filename(file: Path | str, width: int = 3) -> Path:

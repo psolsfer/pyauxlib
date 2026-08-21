@@ -32,6 +32,7 @@ def generate_alternative_name(file: Path, attempt: int = 1) -> Path:
 def make_compressed_file(  # noqa: PLR0913
     file: Path,
     root_dir: str | Path,
+    *,
     compressed_format: str = "zip",
     retry: bool = True,
     max_attempts: int = 5,

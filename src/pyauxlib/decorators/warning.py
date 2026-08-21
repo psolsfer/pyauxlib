@@ -12,7 +12,7 @@ _routine_stacklevel = 2
 __all__ = ["deprecated", "deprecated_argument", "experimental"]
 
 
-def _get_msg(  # noqa: PLR0913
+def _get_msg(  # noqa: PLR0913, PLR0917
     decorator_name: str,
     wrapped: Callable[..., Any],
     reason: str | None = None,
@@ -26,7 +26,7 @@ def _get_msg(  # noqa: PLR0913
     since = f"since version {since}" if since else ""
     reason = f": {reason}. " if reason else ". "
     removed = f"Will be removed from version {removed}. " if removed else ""
-    additional_msg = f"{additional_msg}." or ""
+    additional_msg = f"{additional_msg}." if additional_msg else ""
 
     return f"{kind} '{name}' deprecated {since}{reason}{removed}{additional_msg}"
 

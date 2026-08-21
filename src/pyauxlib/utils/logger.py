@@ -106,6 +106,7 @@ def _set_level(level: int | str | None, default_level: int | str = "INFO") -> in
 def init_logger(  # noqa: PLR0913
     name: str = "",
     level: int | str = "INFO",
+    *,
     level_console: int | str | None = None,
     level_file: int | str | None = None,
     output_folder: Path | None = None,
